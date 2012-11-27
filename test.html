@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lines using D3.js</title>
+    <script type="text/javascript" src="d3/d3.js"></script>
+	<script src="closure-library/closure/goog/base.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript">
+		goog.require('hello');
+	</script>
+    <script>
+
+
+
+	var size = 400;
+	var painter = undefined;
+	var frame = hello.make_frame(hello.make_vect(0,size),hello.make_vect(size,0),hello.make_vect(0,-size));
+
+	var init = function(){		
+	 lineGraph = d3.select("#D3line")
+		.append("svg:svg")
+		.attr("width", size)   
+		.attr("height", size);
+	}
+
+	var split = function(){
+		d3.select("svg").selectAll("line").remove();
+		painter = hello.beside(painter,painter);
+		painter(frame);
+	}
+	
+	var below = function(){
+		d3.select("svg").selectAll("line").remove();
+		painter = hello.below(painter,painter);
+		painter(frame);
+	}
+	
+	var rotate90 = function(){
+		d3.select("svg").selectAll("line").remove();
+		painter = hello.rotate90(painter);
+		painter(frame);
+	}
+	
+	
+	var restart = function(){
+		d3.select("svg").selectAll("line").remove();
+		painter = hello.segments__GT_painter(hello.wave_segments,lineGraph);
+		painter(frame);
+	}
+	
+	
+	var cenas = function(){
+		init();
+      //hello.draw_line(hello.make_vect(0,0),hello.make_vect(100,100),lineGraph);
+
+	  //hello.draw_line(hello.make_vect(0,0),hello.make_vect(100,100),lineGraph);
+	
+		painter = hello.segments__GT_painter(hello.wave_segments,lineGraph);
+		
+		//painter = hello.below(hello.beside(painter,painter),hello.beside(painter,painter));
+		
+		//painter = hello.rotate90(hello.below(hello.beside(p,p),hello.beside(p,p)));
+		
+		painter(frame);
+	}
+	
+    </script>
+</head> 
+<body onload="cenas()">   
+	
+	<button onclick="split()"></button>
+	<button onclick="below()"></button>
+	<button onclick="rotate90()"></button>
+	<button onclick="restart()"></button>
+	
+	<textarea></textarea>
+
+	
+    <div id="D3line" ></div>
+</body>
+</html>​
