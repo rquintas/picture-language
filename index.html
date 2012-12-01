@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lines using D3.js</title>
+
+	<style type="text/css" media="screen">
+		
+		body {
+			background-color: wheat;
+		}
+		
+		#title {
+			text-align: center;
+			font-size: 48px;
+			color: brown;
+		}
+		
+		#painting_area {
+			background-color: #000000;
+			width: 400px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+		
+		#buttons {
+			text-align: center;
+			background-color: black;
+			width: 400px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+		
+		#wrapper {
+
+		}
+		
+		svg {
+			background-color: wheat;
+		}	
+		
+		line {
+			stroke-width: 5;
+		}		
+		
+		.pagewide {
+			width: 100%;
+			height: 200px;
+			background: black;
+			margin-top: 50px;
+			color: white;
+		}
+		
+	</style>
+
+	<link href="libs/bootstrap/css/bootstrap.css" rel="stylesheet">
+	<link href="libs/codemirror/lib/codemirror.css" rel="stylesheet">
+	<link rel="stylesheet" href="libs/codemirror/theme/blackboard.css">
+	
+    <script type="text/javascript" src="libs/d3/d3.v2.js"></script>
+	<script type="text/javascript" src="libs/jquery.min.js"></script>
+	<script type="text/javascript" src="libs/codemirror/lib/codemirror.js"></script>
+	<script type="text/javascript" src="libs/codemirror/mode/clojure/clojure.js"></script>
+	
+	<script type="text/javascript" src="libs/bootstrap/js/bootstrap.js"></script>
+	<script type="text/javascript" src="libs/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript">
+		goog.require('picture');
+		goog.require('parser');
+	</script>
+    <script>
+
+	console.log(parser.parse("(beside wave wave)"));
+
+	var size = 400;
+	var painter = undefined;
+	var frame = picture.make_frame(picture.make_vect(0,size),picture.make_vect(size,0),picture.make_vect(0,-size));
+
+	var init = function(){		
+	 lineGraph = d3.select("#painting_area")
+		.append("svg:svg")
+		.attr("width", size)   
+		.attr("height", size);
+	}
+
+	var split = function(){
+		d3.select("svg").selectAll("line").remove();
+		painter = picture.beside(painter,painter);
+		painter(frame,lineGraph,0);
+	}
+	
+	var below = function(){
+		d3.select("svg").selectAll("line").remove();
+		painter = picture.below(painter,painter);
+		painter(frame,lineGraph,0);
+	}
+	
+	var rotate90 = function(){
+		d3.select("svg").selectAll("line").remove();
+		painter = picture.rotate90(painter);
+		painter(frame,lineGraph,0);
+	}
+	
+	var shrink_to_upper_right = function(){
+		d3.select("svg").selectAll("line").remove();
+		painter = picture.shrink_to_upper_right(painter);
+		painter(frame,lineGraph,0);
+	}
+	
+	var squash_inwards = function(){
+		d3.select("svg").selectAll("line").remove();
+		painter = picture.squash_inwards(painter);
+		painter(frame,lineGraph,0);
+	}
+	
+	var flip_vert = function(){
+		d3.select("svg").selectAll("line").remove();
+		painter = picture.flip_vert(painter);
+		painter(frame,lineGraph,0);
+	}
+	
+	var restart = function(){
+		d3.select("svg").selectAll("line").remove();
+		painter = picture.segments__GT_painter(picture.wave_segments);
+		painter(frame,lineGraph,0);
+	}
+	
+	var interpret = function(){
+		
+		console.log("INTERPRET");
+		
+		var script = myCodeMirror.getValue().trim();
+		
+		console.log(parser.parse3(script));
+		
+		d3.select("svg").selectAll("line").remove();
+		d3.select("svg").selectAll("g").remove();
+				
+		painter = eval(parser.parse(script));
+		painter(frame,lineGraph,0);
+	}
+	
+	var cenas = function(){
+		
+		myCodeMirror = CodeMirror.fromTextArea(document.getElementById("code"),{'theme':'blackboard'});
+		
+		init();
+      //picture.draw_line(picture.make_vect(0,0),picture.make_vect(100,100),lineGraph);
+
+	  //picture.draw_line(picture.make_vect(0,0),picture.make_vect(100,100),lineGraph);
+	
+		painter = eval(parser.parse("(beside wave wave)")) //picture.segments__GT_painter(picture.wave_segments,lineGraph);
+		
+		//painter = picture.below(picture.beside(painter,painter),picture.beside(painter,painter));
+		
+		//painter = picture.rotate90(picture.below(picture.beside(p,p),picture.beside(p,p)));
+		
+		painter(frame,lineGraph,0);
+	}
+    </script>
+</head>
+<body onload="cenas()">
+	
+	
+	
+	<header class="jumbotron subhead" id="overview">
+	  <div class="container">
+	    <h1>SICP: Picture Language</h1>
+	    <p class="lead">Implementation in ClojureScript.</p>
+	  </div>
+	</header>
+	
+	<h1 id="title"></h1>
+	
+	<div class="">
+	<div class="row">
+	
+		<div class="span6">
+			<div id="wrapper">
+		    	<div id="painting_area"></div>
+			</div>
+	
+			<div id="buttons">
+				<button onclick="split()">Beside</button>
+				<button onclick="below()">Below</button>
+				<button onclick="rotate90()">Rotate90</button>
+				<button onclick="shrink_to_upper_right()">Shrink</button>
+				<button onclick="squash_inwards()">Squash</button>
+				<button onclick="flip_vert()">Flip Vert</button>
+				<button onclick="restart()">Restart</button>
+			</div>
+		</div>
+		
+		<div class="span4">
+				<fieldset>
+					<textarea id="code" name="code">						
+(beside wave wave)
+					</textarea>
+				    <button class="btn" onclick="interpret()">Submit</button>
+				</fieldset>
+		</div>
+	</div>
+	</div>
+	
+	<div class="pagewide">
+	
+		<p>Ricardo Quintas</p>
+		<p>Github</p>
+		<p>Codemirror</p>
+		<p>d3</p>
+		<p>ClojureScript</p>
+		
+	</div>
+
+	
+</body>
+</html>
