@@ -3,6 +3,8 @@ pom.xml
 /lib/
 /classes/
 /targets/
+/target/
+.lein-repl-history
 .lein-deps-sum
 .DS_Store
 .lein-cljsbuild-compiler-0/
