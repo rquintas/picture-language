@@ -1,7 +1,11 @@
 goog.provide('parser');
 goog.require('cljs.core');
+goog.require('clojure.browser.repl');
 goog.require('goog.string.StringBuffer');
 goog.require('goog.string');
+goog.require('picture');
+goog.require('clojure.walk');
+clojure.browser.repl.connect.call(null,"http://localhost:9000/repl");
 parser.pop_BANG_ = (function pop_BANG_(stack){
 var first = cljs.core.first.call(null,cljs.core.deref.call(null,stack));
 cljs.core.swap_BANG_.call(null,stack,cljs.core.pop);
@@ -32,18 +36,21 @@ if(cljs.core.string_QMARK_.call(null,match))
 }
 }
 });
+parser.eval_tree = (function eval_tree(tree){
+return 1;
+});
 parser.parse = (function parse(n){
 var stack = cljs.core.atom.call(null,cljs.core.List.EMPTY);
 var tokens = parser.replace.call(null,parser.replace.call(null,n,"("," LPAREN "),")"," RPAREN ").split(/\s/);
 var tok = tokens;
 while(true){
 if(cljs.core.empty_QMARK_.call(null,tok))
-{return parser.pop_BANG_.call(null,stack);
+{return parser.cwalk.call(null,parser.eval,cljs.core.identity,parser.pop_BANG_.call(null,stack));
 } else
 {parser.evaluate.call(null,cljs.core.last.call(null,tok),stack);
 {
-var G__16573 = cljs.core.butlast.call(null,tok);
-tok = G__16573;
+var G__2847 = cljs.core.butlast.call(null,tok);
+tok = G__2847;
 continue;
 }
 }
@@ -61,8 +68,8 @@ if(cljs.core.empty_QMARK_.call(null,tok))
 } else
 {parser.evaluate.call(null,cljs.core.last.call(null,tok),stack);
 {
-var G__16574 = cljs.core.butlast.call(null,tok);
-tok = G__16574;
+var G__2848 = cljs.core.butlast.call(null,tok);
+tok = G__2848;
 continue;
 }
 }
@@ -78,21 +85,21 @@ return tokens;
 goog.exportSymbol('parser.parse3', parser.parse3);
 parser.evaluate = (function evaluate(tok,stack){
 if(cljs.core._EQ_.call(null,"wave",tok))
-{return parser.push_BANG_.call(null,stack,"picture.segments__GT_painter(picture.wave_segments,lineGraph)");
+{return parser.push_BANG_.call(null,stack,cljs.core.seq.call(null,cljs.core.concat.call(null,cljs.core.list.call(null,"\uFDD1'pic/segments->painter"),cljs.core.list.call(null,"\uFDD1'pic/wave"))));
 } else
 {if(cljs.core._EQ_.call(null,"rotate90",tok))
 {var a = parser.pop_BANG_.call(null,stack);
-return parser.push_BANG_.call(null,stack,[cljs.core.str("picture.rotate90("),cljs.core.str(a),cljs.core.str(")")].join(''));
+return parser.push_BANG_.call(null,stack,cljs.core.list.call(null,"\uFDD1'pic/rotate90",a));
 } else
 {if(cljs.core._EQ_.call(null,"beside",tok))
 {var a = parser.pop_BANG_.call(null,stack);
 var b = parser.pop_BANG_.call(null,stack);
-return parser.push_BANG_.call(null,stack,[cljs.core.str("picture.beside("),cljs.core.str(a),cljs.core.str(","),cljs.core.str(b),cljs.core.str(")")].join(''));
+return parser.push_BANG_.call(null,stack,cljs.core.list.call(null,"\uFDD1'pic/beside",a,b));
 } else
 {if(cljs.core._EQ_.call(null,"below",tok))
 {var a = parser.pop_BANG_.call(null,stack);
 var b = parser.pop_BANG_.call(null,stack);
-return parser.push_BANG_.call(null,stack,[cljs.core.str("picture.below("),cljs.core.str(a),cljs.core.str(","),cljs.core.str(b),cljs.core.str(")")].join(''));
+return parser.push_BANG_.call(null,stack,cljs.core.list.call(null,"\uFDD1'pic/below",a,b));
 } else
 {if("\uFDD0'else")
 {return null;

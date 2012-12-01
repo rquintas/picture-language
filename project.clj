@@ -1,3 +1,8 @@
+(defn cljs-home [path]
+  (if-let [home (get (System/getenv) "CLOJURESCRIPT_HOME")]
+    (str home path)
+    (throw (Exception. "You must set the $CLOJURESCRIPT_HOME variable!"))))
+    
 (defproject picturejs "0.0.1-SNAPSHOT"
   :description "ClojureScript implementing SICP Picture Language"
   :dependencies [[org.clojure/clojure "1.4.0"]]

@@ -86,43 +86,43 @@
 	var split = function(){
 		d3.select("svg").selectAll("line").remove();
 		painter = picture.beside(painter,painter);
-		painter(frame);
+		painter(frame,lineGraph,0);
 	}
 	
 	var below = function(){
 		d3.select("svg").selectAll("line").remove();
 		painter = picture.below(painter,painter);
-		painter(frame);
+		painter(frame,lineGraph,0);
 	}
 	
 	var rotate90 = function(){
 		d3.select("svg").selectAll("line").remove();
 		painter = picture.rotate90(painter);
-		painter(frame);
+		painter(frame,lineGraph,0);
 	}
 	
 	var shrink_to_upper_right = function(){
 		d3.select("svg").selectAll("line").remove();
 		painter = picture.shrink_to_upper_right(painter);
-		painter(frame);
+		painter(frame,lineGraph,0);
 	}
 	
 	var squash_inwards = function(){
 		d3.select("svg").selectAll("line").remove();
 		painter = picture.squash_inwards(painter);
-		painter(frame);
+		painter(frame,lineGraph,0);
 	}
 	
 	var flip_vert = function(){
 		d3.select("svg").selectAll("line").remove();
 		painter = picture.flip_vert(painter);
-		painter(frame);
+		painter(frame,lineGraph,0);
 	}
 	
 	var restart = function(){
 		d3.select("svg").selectAll("line").remove();
-		painter = picture.segments__GT_painter(picture.wave_segments,lineGraph);
-		painter(frame);
+		painter = picture.segments__GT_painter(picture.wave_segments);
+		painter(frame,lineGraph,0);
 	}
 	
 	var interpret = function(){
@@ -133,9 +133,11 @@
 		
 		console.log(parser.parse3(script));
 		
-		d3.select("svg").selectAll("line").remove();		
+		d3.select("svg").selectAll("line").remove();
+		d3.select("svg").selectAll("g").remove();
+				
 		painter = eval(parser.parse(script));
-		painter(frame);
+		painter(frame,lineGraph,0);
 	}
 	
 	var cenas = function(){
@@ -153,7 +155,7 @@
 		
 		//painter = picture.rotate90(picture.below(picture.beside(p,p),picture.beside(p,p)));
 		
-		painter(frame);
+		painter(frame,lineGraph,0);
 	}
     </script>
 </head>

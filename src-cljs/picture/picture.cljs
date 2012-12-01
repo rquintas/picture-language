@@ -66,8 +66,11 @@
 (defn draw-image [frame image graphics]
 	(list 0))
 
-(defn segments->painter [segment-list graphics]
-    (fn [frame]
+(defn draw-as-group [graphics]
+    (-> graphics (.append "svg:g")))
+
+(defn segments->painter [segment-list]
+    (fn [frame graphics]
         (loop [segments segment-list]
             (if (empty? segments)
                 segment-list
@@ -78,24 +81,25 @@
                         graphics)
                     (recur (rest segments)))))))
 
-(defn image->painter [image graphics]
-    (fn [frame]
+(defn image->painter [image]
+    (fn [frame graphics]
         (draw-image frame image graphics)))
 
-(defn outline-painter [graphics]
+(defn outline-painter []
     (let [segment-list (list (make-segment (make-vect 0 0) (make-vect 0 1))
                              (make-segment (make-vect 0 0) (make-vect 1 0))
                              (make-segment (make-vect 1 1) (make-vect 0 1))
                              (make-segment (make-vect 1 0) (make-vect 1 1)))]
-        (segments->painter segment-list graphics)))
+        (segments->painter segment-list)))
 
 
 (defn transform-painter [painter origin corner1 corner2]
-    (fn [frame] 
+    (fn [frame graphics] 
         (let [m (frame-coord-map frame)
              new-origin (m origin)]
          (painter (make-frame new-origin (sub-vect (m corner1) new-origin)
-                                         (sub-vect (m corner2) new-origin))))))
+                                         (sub-vect (m corner2) new-origin))
+                                         (draw-as-group graphics)))))
 
 (defn flip-vert [painter]
     (transform-painter painter
@@ -129,9 +133,10 @@
           paint-right (transform-painter painter2 split-point
                                                   (make-vect 1.0 0)
                                                   (make-vect 0.5 1.0))]
-         (fn [frame]
-             (paint-left frame)
-             (paint-right frame))))
+         (fn [frame graphics]
+             (let [group (draw-as-group graphics)]
+                (paint-left frame group)
+                (paint-right frame group)))))
 
 (defn below [painter1 painter2]
     (let [split-point (make-vect 0.0 0.5)
@@ -141,9 +146,10 @@
           paint-down (transform-painter painter2  (make-vect 0.0 0.0)
                                                   (make-vect 1.0 0.0)
                                                   split-point)]
-         (fn [frame]
-             (paint-up frame)
-             (paint-down frame))))
+         (fn [frame graphics]
+             (let [group (draw-as-group graphics)]
+                (paint-up frame group)
+                (paint-down frame group)))))
 
 (def wave-segments
      (list

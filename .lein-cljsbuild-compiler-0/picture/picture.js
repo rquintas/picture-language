@@ -57,8 +57,11 @@ goog.exportSymbol('picture.draw_line', picture.draw_line);
 picture.draw_image = (function draw_image(frame,image,graphics){
 return cljs.core.list.call(null,0);
 });
-picture.segments__GT_painter = (function segments__GT_painter(segment_list,graphics){
-return (function (frame){
+picture.draw_as_group = (function draw_as_group(graphics){
+return graphics.append("svg:g");
+});
+picture.segments__GT_painter = (function segments__GT_painter(segment_list){
+return (function (frame,graphics){
 var segments = segment_list;
 while(true){
 if(cljs.core.empty_QMARK_.call(null,segments))
@@ -66,8 +69,8 @@ if(cljs.core.empty_QMARK_.call(null,segments))
 } else
 {picture.draw_line.call(null,picture.frame_coord_map.call(null,frame).call(null,picture.start_segment.call(null,cljs.core.first.call(null,segments))),picture.frame_coord_map.call(null,frame).call(null,picture.end_segment.call(null,cljs.core.first.call(null,segments))),graphics);
 {
-var G__2821 = cljs.core.rest.call(null,segments);
-segments = G__2821;
+var G__5192 = cljs.core.rest.call(null,segments);
+segments = G__5192;
 continue;
 }
 }
@@ -75,20 +78,20 @@ break;
 }
 });
 });
-picture.image__GT_painter = (function image__GT_painter(image,graphics){
-return (function (frame){
+picture.image__GT_painter = (function image__GT_painter(image){
+return (function (frame,graphics){
 return picture.draw_image.call(null,frame,image,graphics);
 });
 });
-picture.outline_painter = (function outline_painter(graphics){
+picture.outline_painter = (function outline_painter(){
 var segment_list = cljs.core.list.call(null,picture.make_segment.call(null,picture.make_vect.call(null,0,0),picture.make_vect.call(null,0,1)),picture.make_segment.call(null,picture.make_vect.call(null,0,0),picture.make_vect.call(null,1,0)),picture.make_segment.call(null,picture.make_vect.call(null,1,1),picture.make_vect.call(null,0,1)),picture.make_segment.call(null,picture.make_vect.call(null,1,0),picture.make_vect.call(null,1,1)));
-return picture.segments__GT_painter.call(null,segment_list,graphics);
+return picture.segments__GT_painter.call(null,segment_list);
 });
 picture.transform_painter = (function transform_painter(painter,origin,corner1,corner2){
-return (function (frame){
+return (function (frame,graphics){
 var m = picture.frame_coord_map.call(null,frame);
 var new_origin = m.call(null,origin);
-return painter.call(null,picture.make_frame.call(null,new_origin,picture.sub_vect.call(null,m.call(null,corner1),new_origin),picture.sub_vect.call(null,m.call(null,corner2),new_origin)));
+return painter.call(null,picture.make_frame.call(null,new_origin,picture.sub_vect.call(null,m.call(null,corner1),new_origin),picture.sub_vect.call(null,m.call(null,corner2),new_origin)),picture.draw_as_group.call(null,graphics));
 });
 });
 picture.flip_vert = (function flip_vert(painter){
@@ -107,18 +110,20 @@ picture.beside = (function beside(painter1,painter2){
 var split_point = picture.make_vect.call(null,0.5,0.0);
 var paint_left = picture.transform_painter.call(null,painter1,picture.make_vect.call(null,0,0),split_point,picture.make_vect.call(null,0.0,1.0));
 var paint_right = picture.transform_painter.call(null,painter2,split_point,picture.make_vect.call(null,1.0,0),picture.make_vect.call(null,0.5,1.0));
-return (function (frame){
-paint_left.call(null,frame);
-return paint_right.call(null,frame);
+return (function (frame,graphics){
+var group = picture.draw_as_group.call(null,graphics);
+paint_left.call(null,frame,group);
+return paint_right.call(null,frame,group);
 });
 });
 picture.below = (function below(painter1,painter2){
 var split_point = picture.make_vect.call(null,0.0,0.5);
 var paint_up = picture.transform_painter.call(null,painter1,split_point,picture.make_vect.call(null,1.0,0.5),picture.make_vect.call(null,0.0,1.0));
 var paint_down = picture.transform_painter.call(null,painter2,picture.make_vect.call(null,0.0,0.0),picture.make_vect.call(null,1.0,0.0),split_point);
-return (function (frame){
-paint_up.call(null,frame);
-return paint_down.call(null,frame);
+return (function (frame,graphics){
+var group = picture.draw_as_group.call(null,graphics);
+paint_up.call(null,frame,group);
+return paint_down.call(null,frame,group);
 });
 });
 picture.wave_segments = cljs.core.list.call(null,picture.make_segment.call(null,picture.make_vect.call(null,0.0060,0.84),picture.make_vect.call(null,0.155,0.591)),picture.make_segment.call(null,picture.make_vect.call(null,0.0060,0.635),picture.make_vect.call(null,0.155,0.392)),picture.make_segment.call(null,picture.make_vect.call(null,0.304,0.646),picture.make_vect.call(null,0.155,0.591)),picture.make_segment.call(null,picture.make_vect.call(null,0.298,0.591),picture.make_vect.call(null,0.155,0.392)),picture.make_segment.call(null,picture.make_vect.call(null,0.304,0.646),picture.make_vect.call(null,0.403,0.646)),picture.make_segment.call(null,picture.make_vect.call(null,0.298,0.591),picture.make_vect.call(null,0.354,0.492)),picture.make_segment.call(null,picture.make_vect.call(null,0.403,0.646),picture.make_vect.call(null,0.348,0.845)),picture.make_segment.call(null,picture.make_vect.call(null,0.354,0.492),picture.make_vect.call(null,0.249,0.0)),picture.make_segment.call(null,picture.make_vect.call(null,0.403,0.0),picture.make_vect.call(null,0.502,0.293)),picture.make_segment.call(null,picture.make_vect.call(null,0.502,0.293),picture.make_vect.call(null,0.602,0.0)),picture.make_segment.call(null,picture.make_vect.call(null,0.348,0.845),picture.make_vect.call(null,0.403,0.999)),picture.make_segment.call(null,picture.make_vect.call(null,0.602,0.999),picture.make_vect.call(null,0.652,0.845)),picture.make_segment.call(null,picture.make_vect.call(null,0.652,0.845),picture.make_vect.call(null,0.602,0.646)),picture.make_segment.call(null,picture.make_vect.call(null,0.602,0.646),picture.make_vect.call(null,0.751,0.646)),picture.make_segment.call(null,picture.make_vect.call(null,0.751,0.646),picture.make_vect.call(null,0.999,0.343)),picture.make_segment.call(null,picture.make_vect.call(null,0.751,0.0),picture.make_vect.call(null,0.597,0.442)),picture.make_segment.call(null,picture.make_vect.call(null,0.597,0.442),picture.make_vect.call(null,0.999,0.144)));
