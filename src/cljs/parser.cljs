@@ -1,12 +1,7 @@
 (ns parser
   (:refer-clojure :exclude [replace])
-  (:require [clojure.walk :as cwalk]
-            [picture :as pic]
-            [goog.string :as gstring]
-            [goog.string.StringBuffer :as gstringbuf]
-            [clojure.browser.repl :as repl]))
-
-(repl/connect "http://localhost:9000/repl")
+  (:require [goog.string :as gstring]
+            [goog.string.StringBuffer :as gstringbuf]))
 
 (defn pop! [stack]
   (let [first (first @stack)]
@@ -29,15 +24,12 @@
           (.replace s (js/RegExp. (.-source match) "g") replacement)
           :else (throw (str "Invalid match arg: " match))))
 
-(defn eval-tree [tree]
-    1)
-
 (defn ^:export parse [n]
     (let [stack (atom '())
           tokens (.split (replace (replace n "(" " LPAREN ") ")" " RPAREN ") #"\s")]
         (loop [tok tokens]
             (if (empty? tok)
-                (cwalk eval identity (pop! stack))
+                (pop! stack)
                 (doseq []
                     (evaluate (last tok) stack)
                     (recur (butlast tok)))))))
@@ -58,13 +50,13 @@
         tokens))
                 
 (defn evaluate [tok stack]
-    (cond (= "wave" tok) (push! stack `(pic/segments->painter pic/wave))
+    (cond (= "wave" tok) (push! stack "picture.segments__GT_painter(picture.wave_segments,lineGraph)")
           (= "rotate90" tok) (let [a (pop! stack)]
-                              (push! stack (list 'pic/rotate90 a)))
+                              (push! stack (str "picture.rotate90(" a ")")))
           (= "beside" tok) (let [a (pop! stack)
                                  b (pop! stack)]
-                            (push! stack (list 'pic/beside a b)))
+                            (push! stack (str "picture.beside(" a "," b ")")))
           (= "below" tok) (let [a (pop! stack)
                                 b (pop! stack)]
-                            (push! stack (list 'pic/below a b)))        
+                            (push! stack (str "picture.below(" a "," b ")")))        
            :else nil))
