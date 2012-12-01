@@ -1,6 +1,3 @@
-[submodule "libs/bootstrap"]
-	path = libs/bootstrap
-	url = git://github.com/twitter/bootstrap.git
 [submodule "libs/d3"]
 	path = libs/d3
 	url = git://github.com/mbostock/d3.git
