@@ -66,11 +66,13 @@
 (defn draw-image [frame image graphics]
 	(list 0))
 
-(defn draw-as-group [graphics]
-    (-> graphics (.append "svg:g")))
+(defn draw-as-group [graphics id]
+    (-> graphics (.append "svg:g")
+                 (.attr "id" id)))
 
-(defn segments->painter [segment-list]
-    (fn [frame graphics]
+(defn segments->painter [segment-list id]
+    (fn [frame g]
+    (let [graphics (draw-as-group g id)]
         (loop [segments segment-list]
             (if (empty? segments)
                 segment-list
@@ -79,7 +81,7 @@
                         ((frame-coord-map frame) (start-segment (first segments)))
                         ((frame-coord-map frame) (end-segment (first segments)))
                         graphics)
-                    (recur (rest segments)))))))
+                    (recur (rest segments))))))))
 
 (defn image->painter [image]
     (fn [frame graphics]
@@ -93,61 +95,69 @@
         (segments->painter segment-list)))
 
 
-(defn transform-painter [painter origin corner1 corner2]
+(defn transform-painter [painter origin corner1 corner2 id]
     (fn [frame graphics] 
         (let [m (frame-coord-map frame)
              new-origin (m origin)]
          (painter (make-frame new-origin (sub-vect (m corner1) new-origin)
                                          (sub-vect (m corner2) new-origin))
-                                         (draw-as-group graphics)))))
+                                         (draw-as-group graphics id)))))
 
-(defn flip-vert [painter]
+(defn flip-vert [painter id]
     (transform-painter painter
         (make-vect 0 1)
         (make-vect 1 1)
-        (make-vect 0 0)))
+        (make-vect 0 0)
+        id))
 
-(defn shrink-to-upper-right [painter]
+(defn shrink-to-upper-right [painter id]
     (transform-painter painter
         (make-vect 0.5 0.5)
         (make-vect 1 0.5)
-        (make-vect 0.5 1)))
+        (make-vect 0.5 1)
+        id))
 
-(defn rotate90 [painter]
+(defn rotate90 [painter id]
     (transform-painter painter
         (make-vect 1 0)
         (make-vect 1 1)
-        (make-vect 0 0)))
+        (make-vect 0 0)
+        id))
 
-(defn squash-inwards [painter]
+(defn squash-inwards [painter id]
     (transform-painter painter
         (make-vect 0 0)
         (make-vect 0.65 0.35)
-        (make-vect 0.35 0.65)))
+        (make-vect 0.35 0.65)
+        id))
 
-(defn beside [painter1 painter2]
+(defn beside [painter1 painter2 id]
     (let [split-point (make-vect 0.5 0.0)
           paint-left (transform-painter painter1 (make-vect 0 0)
                                                  split-point
-                                                 (make-vect 0.0 1.0))
+                                                 (make-vect 0.0 1.0)
+                                                 id)
           paint-right (transform-painter painter2 split-point
                                                   (make-vect 1.0 0)
-                                                  (make-vect 0.5 1.0))]
+                                                  (make-vect 0.5 1.0)
+                                                  id)]
          (fn [frame graphics]
-             (let [group (draw-as-group graphics)]
+             (let [group (draw-as-group graphics id)]
                 (paint-left frame group)
                 (paint-right frame group)))))
 
-(defn below [painter1 painter2]
+(defn below [painter1 painter2 id]
     (let [split-point (make-vect 0.0 0.5)
           paint-up (transform-painter painter1 split-point
                                                  (make-vect 1.0 0.5)
-                                                 (make-vect 0.0 1.0))
+                                                 (make-vect 0.0 1.0)
+                                                 id)
           paint-down (transform-painter painter2  (make-vect 0.0 0.0)
                                                   (make-vect 1.0 0.0)
-                                                  split-point)]
+                                                  split-point
+                                                  id)]
          (fn [frame graphics]
-             (let [group (draw-as-group graphics)]
+             (let [group (draw-as-group graphics id)]
                 (paint-up frame group)
                 (paint-down frame group)))))
 

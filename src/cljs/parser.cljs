@@ -29,7 +29,7 @@
           tokens (.split (replace (replace n "(" " LPAREN ") ")" " RPAREN ") #"\s")]
         (loop [tok tokens]
             (if (empty? tok)
-                (pop! stack)
+                (apply str (butlast (walk (pop! stack) 0)))
                 (doseq []
                     (evaluate (last tok) stack)
                     (recur (butlast tok)))))))
@@ -48,15 +48,26 @@
     (let [stack (atom '())
           tokens (.split (replace (replace n "(" " LPAREN ") ")" " RPAREN ") #"\s")]
         tokens))
+  
+(defn walk [l v]
+  (if (and (list? l) (not (empty? l)))
+    (let [a (walk (first l) v)
+          v2 (last a)
+          b (walk (rest l) v2)]
+		(concat (butlast a) b))
+    (if (empty? l)
+      (list "" (inc v))
+      (list (replace (str l) "%G%" (str v)) (inc v)))))
+
                 
 (defn evaluate [tok stack]
-    (cond (= "wave" tok) (push! stack "picture.segments__GT_painter(picture.wave_segments,lineGraph)")
+    (cond (= "wave" tok) (push! stack "picture.segments__GT_painter(picture.wave_segments,%G%)")
           (= "rotate90" tok) (let [a (pop! stack)]
-                              (push! stack (str "picture.rotate90(" a ")")))
+                              (push! stack (list "picture.rotate90(" a ",%G%)")))
           (= "beside" tok) (let [a (pop! stack)
                                  b (pop! stack)]
-                            (push! stack (str "picture.beside(" a "," b ")")))
+                            (push! stack (list "picture.beside(" a "," b ",%G%)")))
           (= "below" tok) (let [a (pop! stack)
                                 b (pop! stack)]
-                            (push! stack (str "picture.below(" a "," b ")")))        
+                            (push! stack (list "picture.below(" a "," b ",%G%)")))        
            :else nil))
