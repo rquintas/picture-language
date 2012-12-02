@@ -3,4 +3,4 @@ picture-language
 
 SICP: Picture Language
 
-Check it out at http://rquintas.net/picture-language/[http://rquintas.net/picture-language/]
+Check it out at http://rquintas.net/picture-language/
