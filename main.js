@@ -20980,15 +20980,15 @@ parser.parse = function parse(n) {
   }
 };
 goog.exportSymbol("parser.parse", parser.parse);
-parser.parse2 = function parse2(n) {
+parser.parseToHtml = function parseToHtml(n) {
   var stack__6119 = cljs.core.atom.call(null, cljs.core.List.EMPTY);
   var tokens__6120 = parser.replace.call(null, parser.replace.call(null, n, "(", " LPAREN "), ")", " RPAREN ").split(/\s/);
   var tok__6121 = tokens__6120;
   while(true) {
     if(cljs.core.empty_QMARK_.call(null, tok__6121)) {
-      return stack__6119
+      return cljs.core.apply.call(null, cljs.core.str, cljs.core.butlast.call(null, parser.walkc.call(null, parser.pop_BANG_.call(null, stack__6119), 0)))
     }else {
-      parser.evaluate.call(null, cljs.core.last.call(null, tok__6121), stack__6119);
+      parser.evaluateHTML.call(null, cljs.core.last.call(null, tok__6121), stack__6119);
       var G__6122 = cljs.core.butlast.call(null, tok__6121);
       tok__6121 = G__6122;
       continue
@@ -20996,31 +20996,69 @@ parser.parse2 = function parse2(n) {
     break
   }
 };
+goog.exportSymbol("parser.parseToHtml", parser.parseToHtml);
+parser.parse2 = function parse2(n) {
+  var stack__6126 = cljs.core.atom.call(null, cljs.core.List.EMPTY);
+  var tokens__6127 = parser.replace.call(null, parser.replace.call(null, n, "(", " LPAREN "), ")", " RPAREN ").split(/\s/);
+  var tok__6128 = tokens__6127;
+  while(true) {
+    if(cljs.core.empty_QMARK_.call(null, tok__6128)) {
+      return stack__6126
+    }else {
+      parser.evaluate.call(null, cljs.core.last.call(null, tok__6128), stack__6126);
+      var G__6129 = cljs.core.butlast.call(null, tok__6128);
+      tok__6128 = G__6129;
+      continue
+    }
+    break
+  }
+};
 goog.exportSymbol("parser.parse2", parser.parse2);
 parser.parse3 = function parse3(n) {
-  var stack__6125 = cljs.core.atom.call(null, cljs.core.List.EMPTY);
-  var tokens__6126 = parser.replace.call(null, parser.replace.call(null, n, "(", " LPAREN "), ")", " RPAREN ").split(/\s/);
-  return tokens__6126
+  var stack__6132 = cljs.core.atom.call(null, cljs.core.List.EMPTY);
+  var tokens__6133 = parser.replace.call(null, parser.replace.call(null, n, "(", " LPAREN "), ")", " RPAREN ").split(/\s/);
+  return tokens__6133
 };
 goog.exportSymbol("parser.parse3", parser.parse3);
 parser.walk = function walk(l, v) {
   if(function() {
-    var and__3822__auto____6131 = cljs.core.list_QMARK_.call(null, l);
-    if(and__3822__auto____6131) {
+    var and__3822__auto____6138 = cljs.core.list_QMARK_.call(null, l);
+    if(and__3822__auto____6138) {
       return!cljs.core.empty_QMARK_.call(null, l)
     }else {
-      return and__3822__auto____6131
+      return and__3822__auto____6138
     }
   }()) {
-    var a__6132 = walk.call(null, cljs.core.first.call(null, l), v);
-    var v2__6133 = cljs.core.last.call(null, a__6132);
-    var b__6134 = walk.call(null, cljs.core.rest.call(null, l), v2__6133);
-    return cljs.core.concat.call(null, cljs.core.butlast.call(null, a__6132), b__6134)
+    var a__6139 = walk.call(null, cljs.core.first.call(null, l), v);
+    var v2__6140 = cljs.core.last.call(null, a__6139);
+    var b__6141 = walk.call(null, cljs.core.rest.call(null, l), v2__6140);
+    return cljs.core.concat.call(null, cljs.core.butlast.call(null, a__6139), b__6141)
   }else {
     if(cljs.core.empty_QMARK_.call(null, l)) {
       return cljs.core.list.call(null, "", v + 1)
     }else {
-      return cljs.core.list.call(null, parser.replace.call(null, [cljs.core.str(l)].join(""), "%G%", [cljs.core.str(v)].join("")), v + 1)
+      return cljs.core.list.call(null, parser.replace.call(null, [cljs.core.str(l)].join(""), "%G%", [cljs.core.str("'g"), cljs.core.str(v), cljs.core.str("'")].join("")), v + 1)
+    }
+  }
+};
+parser.walkc = function walkc(l, v) {
+  if(function() {
+    var and__3822__auto____6146 = cljs.core.list_QMARK_.call(null, l);
+    if(and__3822__auto____6146) {
+      return!cljs.core.empty_QMARK_.call(null, l)
+    }else {
+      return and__3822__auto____6146
+    }
+  }()) {
+    var a__6147 = walkc.call(null, cljs.core.first.call(null, l), v);
+    var v2__6148 = cljs.core.last.call(null, a__6147);
+    var b__6149 = walkc.call(null, cljs.core.rest.call(null, l), v2__6148);
+    return cljs.core.concat.call(null, cljs.core.butlast.call(null, a__6147), b__6149)
+  }else {
+    if(cljs.core.empty_QMARK_.call(null, l)) {
+      return cljs.core.list.call(null, "", v + 1)
+    }else {
+      return cljs.core.list.call(null, parser.replace.call(null, [cljs.core.str(l)].join(""), "%G%", [cljs.core.str("'c"), cljs.core.str(v), cljs.core.str("'")].join("")), v + 1)
     }
   }
 };
@@ -21029,18 +21067,46 @@ parser.evaluate = function evaluate(tok, stack) {
     return parser.push_BANG_.call(null, stack, "picture.segments__GT_painter(picture.wave_segments,%G%)")
   }else {
     if(cljs.core._EQ_.call(null, "rotate90", tok)) {
-      var a__6140 = parser.pop_BANG_.call(null, stack);
-      return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.rotate90(", a__6140, ",%G%)"))
+      var a__6155 = parser.pop_BANG_.call(null, stack);
+      return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.rotate90(", a__6155, ",%G%)"))
     }else {
       if(cljs.core._EQ_.call(null, "beside", tok)) {
-        var a__6141 = parser.pop_BANG_.call(null, stack);
-        var b__6142 = parser.pop_BANG_.call(null, stack);
-        return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.beside(", a__6141, ",", b__6142, ",%G%)"))
+        var a__6156 = parser.pop_BANG_.call(null, stack);
+        var b__6157 = parser.pop_BANG_.call(null, stack);
+        return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.beside(", a__6156, ",", b__6157, ",%G%)"))
       }else {
         if(cljs.core._EQ_.call(null, "below", tok)) {
-          var a__6143 = parser.pop_BANG_.call(null, stack);
-          var b__6144 = parser.pop_BANG_.call(null, stack);
-          return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.below(", a__6143, ",", b__6144, ",%G%)"))
+          var a__6158 = parser.pop_BANG_.call(null, stack);
+          var b__6159 = parser.pop_BANG_.call(null, stack);
+          return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.below(", a__6158, ",", b__6159, ",%G%)"))
+        }else {
+          if("\ufdd0'else") {
+            return null
+          }else {
+            return null
+          }
+        }
+      }
+    }
+  }
+};
+parser.evaluateHTML = function evaluateHTML(tok, stack) {
+  if(cljs.core._EQ_.call(null, "wave", tok)) {
+    return parser.push_BANG_.call(null, stack, "<span id=%G%>wave</span>")
+  }else {
+    if(cljs.core._EQ_.call(null, "rotate90", tok)) {
+      var a__6165 = parser.pop_BANG_.call(null, stack);
+      return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>rotate90</span> ", a__6165, "<span id=%G%>X</span>"))
+    }else {
+      if(cljs.core._EQ_.call(null, "beside", tok)) {
+        var a__6166 = parser.pop_BANG_.call(null, stack);
+        var b__6167 = parser.pop_BANG_.call(null, stack);
+        return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>beside</span> ", a__6166, " ", b__6167, "<span id=%G%>X</span>"))
+      }else {
+        if(cljs.core._EQ_.call(null, "below", tok)) {
+          var a__6168 = parser.pop_BANG_.call(null, stack);
+          var b__6169 = parser.pop_BANG_.call(null, stack);
+          return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>below</span> ", a__6168, " ", b__6169, "<span id=%G%>X</span>"))
         }else {
           if("\ufdd0'else") {
             return null

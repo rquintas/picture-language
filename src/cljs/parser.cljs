@@ -34,6 +34,16 @@
                     (evaluate (last tok) stack)
                     (recur (butlast tok)))))))
 
+(defn ^:export parseToHtml [n]
+    (let [stack (atom '())
+          tokens (.split (replace (replace n "(" " LPAREN ") ")" " RPAREN ") #"\s")]
+        (loop [tok tokens]
+            (if (empty? tok)
+                (apply str (butlast (walkc (pop! stack) 0)))
+                (doseq []
+                    (evaluateHTML (last tok) stack)
+                    (recur (butlast tok)))))))
+
 (defn ^:export parse2 [n]
     (let [stack (atom '())
           tokens (.split (replace (replace n "(" " LPAREN ") ")" " RPAREN ") #"\s")]
@@ -57,8 +67,17 @@
 		(concat (butlast a) b))
     (if (empty? l)
       (list "" (inc v))
-      (list (replace (str l) "%G%" (str v)) (inc v)))))
+      (list (replace (str l) "%G%" (str "'g" v "'")) (inc v)))))
 
+(defn walkc [l v]
+  (if (and (list? l) (not (empty? l)))
+    (let [a (walkc (first l) v)
+          v2 (last a)
+          b (walkc (rest l) v2)]
+		(concat (butlast a) b))
+    (if (empty? l)
+      (list "" (inc v))
+      (list (replace (str l) "%G%" (str "'c" v "'")) (inc v)))))
                 
 (defn evaluate [tok stack]
     (cond (= "wave" tok) (push! stack "picture.segments__GT_painter(picture.wave_segments,%G%)")
@@ -70,4 +89,16 @@
           (= "below" tok) (let [a (pop! stack)
                                 b (pop! stack)]
                             (push! stack (list "picture.below(" a "," b ",%G%)")))        
+           :else nil))
+           
+(defn evaluateHTML [tok stack]
+    (cond (= "wave" tok) (push! stack "<span id=%G%>wave</span>")
+          (= "rotate90" tok) (let [a (pop! stack)]
+                              (push! stack (list "<span id=%G%>rotate90</span> " a "<span id=%G%>X</span>")))
+          (= "beside" tok) (let [a (pop! stack)
+                                 b (pop! stack)]
+                            (push! stack (list "<span id=%G%>beside</span> " a " " b "<span id=%G%>X</span>")))
+          (= "below" tok) (let [a (pop! stack)
+                                b (pop! stack)]
+                            (push! stack (list "<span id=%G%>below</span> " a " " b "<span id=%G%>X</span>")))        
            :else nil))

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Lines using D3.js</title>
+    <title>Picture Language</title>
 
 	<style type="text/css" media="screen">
 		
@@ -138,6 +138,32 @@
 				
 		painter = eval(parser.parse(script));
 		painter(frame,lineGraph,0);
+		
+		console.log(parser.parseToHtml(script));
+		$("#code2").html(parser.parseToHtml(script));
+		
+		$.each($("#code2").find("span"),function(i,el){
+			console.log(el);
+			$(el).hover(function(){
+				
+				var id = "#"+$(el).attr("id");
+				
+				id = id.replace("c","g");
+				
+				d3.select(id).selectAll("line").style("stroke", "rgb(0,120,0)");
+				
+			},	function(){
+
+					var id = "#"+$(el).attr("id");
+
+					id = id.replace("c","g");
+
+					d3.select(id).selectAll("line").style("stroke", "rgb(6,120,155)");
+
+				});
+			
+		});
+		
 	}
 	
 	var cenas = function(){
@@ -150,6 +176,7 @@
 	  //picture.draw_line(picture.make_vect(0,0),picture.make_vect(100,100),lineGraph);
 	
 		console.log(parser.parse("(beside wave wave)"));
+		
 	
 		painter = eval(parser.parse("(beside wave wave)")) //picture.segments__GT_painter(picture.wave_segments,lineGraph);
 		
@@ -162,8 +189,6 @@
     </script>
 </head>
 <body onload="cenas()">
-	
-	
 	
 	<header class="jumbotron subhead" id="overview">
 	  <div class="container">
@@ -201,6 +226,11 @@
 				    <button class="btn" onclick="interpret()">Submit</button>
 				</fieldset>
 		</div>
+		
+		<div id="code2">
+
+		</div>
+		
 	</div>
 	</div>
 	
