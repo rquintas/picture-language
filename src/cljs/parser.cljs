@@ -30,6 +30,14 @@
       (if (> (.indexOf (str l) "%G%") -1)
           (list (string/replace (str l) "%G%" (str "'" prefix v "'")) (inc v))
           (list (str l) v)))))
+          
+(defn numberGroups [sentence]
+    (loop [s sentence]
+        (let [idx (.indexOf s "%G%")]
+            (if (> idx -1)
+                (recur (string/replace s "%G%" (str "'" prefix idx "'")))
+                sentence))))
+        
                              
 (defn evaluate [tok stack]
     (cond (= "wave" tok) (push! stack "picture.segments__GT_painter(picture.wave_segments,%G%)")
