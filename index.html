@@ -134,6 +134,7 @@
 		d3.select("svg").selectAll("line").remove();
 		d3.select("svg").selectAll("g").remove();
 				
+		console.log(parser.parse(script,parser.evaluate,'g'));
 		painter = eval(parser.parse(script,parser.evaluate,'g'));
 		painter(frame,lineGraph,0);
 		

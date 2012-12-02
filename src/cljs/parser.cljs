@@ -14,10 +14,19 @@
           tokens (.split (string/replace (string/replace n "(" " LPAREN ") ")" " RPAREN ") #"\s")]
         (loop [tok tokens]
             (if (empty? tok)
-                (numberGroups (apply str (pop! stack)) groupPrefix)
+                (numberGroups (apply str (walk (pop! stack))) groupPrefix)
                 (doseq []
                     (evalFunction (last tok) stack)
                     (recur (butlast tok)))))))
+  
+(defn walk [l]
+  (if (and (list? l) (not (empty? l)))
+    (let [a (walk (first l))
+          b (walk (rest l))]
+		(concat a b))
+    (if (empty? l)
+      ""
+      (str l))))
           
 (defn numberGroups [sentence prefix]
     (loop [s sentence v 0]
