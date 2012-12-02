@@ -1,84 +1,198 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>Interactive Picture Language</title>
 
-  <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Picture-language : SICP: Picture Language" />
+	<link href="libs/bootstrap/css/bootstrap.css" rel="stylesheet">
+	<link href="libs/codemirror/lib/codemirror.css" rel="stylesheet">
+	<link rel="stylesheet" href="libs/codemirror/theme/blackboard.css">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+	<style type="text/css" media="screen">
+		
+		body {
+			background-color: white;
+		}
+		
+		.footer {
+			margin-top: 8em;
+		}
+		
+		svg {
+			background-color: white;
+		}
+		
+		line {
+			stroke-width: 5;
+		}
+		
+		.CodeMirror-scroll {
+			height: 400px;
+		}
+		
+	</style>
+	
+    <script type="text/javascript" src="libs/d3/d3.v2.js"></script>
+	<script type="text/javascript" src="libs/jquery.min.js"></script>
+	<script type="text/javascript" src="libs/codemirror/lib/codemirror.js"></script>
+	<script type="text/javascript" src="javascripts/picmode.js"></script>
+	
+	<script type="text/javascript" src="libs/bootstrap/js/bootstrap.js"></script>
+	<script src="libs/bootstrap/js/bootstrap-tab.js"></script>
+	
+    <script type="text/javascript" src="javascripts/main.js"></script>
+    <script type="text/javascript">
+		goog.require('picture');
+		goog.require('parser');
+	</script>
+    <script>
 
-    <title>Picture-language</title>
-  </head>
+	var size = 400;
+	var painter = undefined;
+	var frame = picture.make_frame(picture.make_vect(0,size),picture.make_vect(size,0),picture.make_vect(0,-size));
+		
+	var interpret = function(){
+		try{
+			var script = myCodeMirror.getValue().trim();
+			painter = eval(parser.parse(script,parser.evaluate,'g'));
+			
+			d3.select("svg").selectAll("line").remove();
+			d3.select("svg").selectAll("g").remove();
+			painter(frame,lineGraph,0);
+		}
+		catch(err)
+		{
+			console.log("Error while interpreting.")
+		}
+	}
+	
+	var updateBindings = function(){
+		
+		$(".cm-keyword,.cm-builtin").filter(function() {
+		    return $(this).css('visibility') != 'hidden' && $(this).css('display') != 'none';
+		}).each(function(i,el){
+			$(el).hover(function(){
+				var id = "#g"+i;
+				d3.select(id).selectAll("line").style("stroke", "rgb(120,0,0)");
+			},function(){
+				var id = "#g"+i;
+				d3.select(id).selectAll("line").style("stroke", "rgb(6,120,155)");
+			});
+		});
+		
+	}
+	
+	var init = function(){
+		
+		myCodeMirror = CodeMirror.fromTextArea(document.getElementById("code"),
+											   {'theme':'blackboard',
+												'onChange':interpret,
+												'mode':'picture-language',
+												'autoClearEmptyLines':true,
+												'gutter':true,
+												'onUpdate':updateBindings,
+												'lineNumbers':true,
+												'matchBrackets':true});
+		
+		lineGraph = d3.select("#painting_area")
+				  	  .append("svg:svg")
+					  .attr("width", size)   
+					  .attr("height", size);
+		
+		interpret();
+	}
+    </script>
+</head>
 
-  <body>
+<body onload="init()">
+	
+	<header class="jumbotron subhead" id="overview">
+	  <div class="container">
+	    <h1>SICP: Picture Language</h1>
+	    <p class="lead">An interactive implementation of <a href="http://mitpress.mit.edu/sicp/">SICP</a> picture language.</p>
+	  </div>
+	</header>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/rquintas/picture-language">View on GitHub</a>
+	<div class="container">
+			<div class="row">
+				<div class="span6">
+					<div id="wrapper">
+				    	<div id="painting_area"></div>
+					</div>
+				</div>
+		
+				<div class="span6">
+					<div class="tabbable tabs-right">
+						<ul class="nav nav-tabs" id="myTab">
+						  <li class="active"><a href="#codetab">Code</a></li>
+						  <li><a href="#doctab">Docs</a></li>
+						</ul>
+						<div class="tab-content">
+						  <div class="tab-pane active" id="codetab">
+	  	
+							 <fieldset>
+							 	<textarea id="code" name="code">(beside wave 
+						(below 
+							(rotate90 wave) 
+							(flip-vert wave)))</textarea>
+							     <!--<button class="btn" onclick="interpret()">Submit</button>-->
+							 </fieldset>
+		
+						  </div>
+						  <div class="tab-pane" id="doctab">
+							<h4>Primitive</h4>
+							<ul class="unstyled">
+								<li>wave</li>
+							</ul>
+							<h4>Methods of composition</h4>
+							<ul class="unstyled">
+								<li>(rotate90 x)</li>
+								<li>(flip-vert x)</li>
+								<li>(shrink-to-upper-right x)</li>
+								<li>(squash-inwards x)</li>
+								<li>(beside x y)</li>
+								<li>(below x y)</li>
+							</ul>
+						  </div>
+						</div>
+					</div>
+				</div>
+		
+			<script>
+			$('#myTab a').click(function(e) {
+			    e.preventDefault();
+			    $(this).tab('show');
+			})
+			</script>
 
-          <h1 id="project_title">Picture-language</h1>
-          <h2 id="project_tagline">SICP: Picture Language</h2>
+		</div>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/rquintas/picture-language/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/rquintas/picture-language/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
+		<footer  class="footer">
+		
+			<a href="https://github.com/rquintas/picture-language"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+		
+			By <a href="http://rquintas.net/">Ricardo Quintas</a>
+			using 
+			<a href="https://github.com/clojure/clojurescript/">ClojureScript</a>,
+			<a href="http://codemirror.net/">Codemirror</a>,
+			<a href="http://d3js.org/">D3.js</a>,
+			<a href="http://twitter.github.com/bootstrap/">Bootstrap</a> and
+			<a href="http://jquery.com/">jQuery</a>
+		
+		
+		</footer>
+	
+	</div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>Welcome to GitHub Pages.</h3>
-
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Picture-language maintained by <a href="https://github.com/rquintas">rquintas</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-              <script type="text/javascript">
-            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-          </script>
-          <script type="text/javascript">
-            try {
-              var pageTracker = _gat._getTracker("UA-36753392-1");
-            pageTracker._trackPageview();
-            } catch(err) {}
-          </script>
-
-
-  </body>
+	<script type="text/javascript">
+	  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+	  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+	<script type="text/javascript">
+	  try {
+	    var pageTracker = _gat._getTracker("UA-36753392-1");
+	  pageTracker._trackPageview();
+	  } catch(err) {}
+	</script>
+	
+</body>
 </html>
