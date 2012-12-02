@@ -3,23 +3,20 @@
 <head>
     <title>Picture Language</title>
 
+	<link href="libs/bootstrap/css/bootstrap.css" rel="stylesheet">
+	<link href="libs/codemirror/lib/codemirror.css" rel="stylesheet">
+	<link rel="stylesheet" href="libs/codemirror/theme/blackboard.css">
+
 	<style type="text/css" media="screen">
 		
 		body {
-			background-color: wheat;
+			background-color: white;
 		}
 		
 		#title {
 			text-align: center;
 			font-size: 48px;
 			color: brown;
-		}
-		
-		#painting_area {
-			background-color: #000000;
-			width: 400px;
-			margin-left: auto;
-			margin-right: auto;
 		}
 		
 		#buttons {
@@ -35,7 +32,7 @@
 		}
 		
 		svg {
-			background-color: wheat;
+			background-color: white;
 		}	
 		
 		line {
@@ -50,19 +47,20 @@
 			color: white;
 		}
 		
+		.CodeMirror-scroll {
+			height: 400px;
+		}
+		
 	</style>
-
-	<link href="libs/bootstrap/css/bootstrap.css" rel="stylesheet">
-	<link href="libs/codemirror/lib/codemirror.css" rel="stylesheet">
-	<link rel="stylesheet" href="libs/codemirror/theme/blackboard.css">
 	
     <script type="text/javascript" src="libs/d3/d3.v2.js"></script>
 	<script type="text/javascript" src="libs/jquery.min.js"></script>
 	<script type="text/javascript" src="libs/codemirror/lib/codemirror.js"></script>
-	<script type="text/javascript" src="libs/codemirror/mode/clojure/clojure.js"></script>
+	<script type="text/javascript" src="picmode.js"></script>
 	
 	<script type="text/javascript" src="libs/bootstrap/js/bootstrap.js"></script>
-	<script type="text/javascript" src="libs/bootstrap/js/bootstrap.js"></script>
+	<script src="libs/bootstrap/js/bootstrap-tab.js"></script>
+	
     <script type="text/javascript" src="main.js"></script>
     <script type="text/javascript">
 		goog.require('picture');
@@ -75,161 +73,117 @@
 	var size = 400;
 	var painter = undefined;
 	var frame = picture.make_frame(picture.make_vect(0,size),picture.make_vect(size,0),picture.make_vect(0,-size));
-
-	var init = function(){		
-	 lineGraph = d3.select("#painting_area")
-		.append("svg:svg")
-		.attr("width", size)   
-		.attr("height", size);
-	}
-
-	var split = function(){
-		d3.select("svg").selectAll("line").remove();
-		painter = picture.beside(painter,painter);
-		painter(frame,lineGraph,0);
-	}
-	
-	var below = function(){
-		d3.select("svg").selectAll("line").remove();
-		painter = picture.below(painter,painter);
-		painter(frame,lineGraph,0);
-	}
-	
-	var rotate90 = function(){
-		d3.select("svg").selectAll("line").remove();
-		painter = picture.rotate90(painter);
-		painter(frame,lineGraph,0);
-	}
-	
-	var shrink_to_upper_right = function(){
-		d3.select("svg").selectAll("line").remove();
-		painter = picture.shrink_to_upper_right(painter);
-		painter(frame,lineGraph,0);
-	}
-	
-	var squash_inwards = function(){
-		d3.select("svg").selectAll("line").remove();
-		painter = picture.squash_inwards(painter);
-		painter(frame,lineGraph,0);
-	}
-	
-	var flip_vert = function(){
-		d3.select("svg").selectAll("line").remove();
-		painter = picture.flip_vert(painter);
-		painter(frame,lineGraph,0);
-	}
-	
-	var restart = function(){
-		d3.select("svg").selectAll("line").remove();
-		painter = picture.segments__GT_painter(picture.wave_segments);
-		painter(frame,lineGraph,0);
-	}
-	
+		
 	var interpret = function(){
-		
-		console.log("INTERPRET");
-		
-		var script = myCodeMirror.getValue().trim();
-		
-		d3.select("svg").selectAll("line").remove();
-		d3.select("svg").selectAll("g").remove();
-				
-		console.log(parser.parse(script,parser.evaluate,'g'));
-		painter = eval(parser.parse(script,parser.evaluate,'g'));
-		painter(frame,lineGraph,0);
-		
-		console.log(parser.parse(script,parser.evaluateHTML,'c'));
-		$("#code2").html(parser.parse(script,parser.evaluateHTML,'c'));
-		
-		$.each($("#code2").find("span"),function(i,el){
-			console.log(el);
-			$(el).hover(function(){
-				
-				var id = "#"+$(el).attr("id");
-				
-				id = id.replace("c","g");
-				
-				d3.select(id).selectAll("line").style("stroke", "rgb(0,120,0)");
-				
-			},	function(){
-
-					var id = "#"+$(el).attr("id");
-
-					id = id.replace("c","g");
-
-					d3.select(id).selectAll("line").style("stroke", "rgb(6,120,155)");
-
-				});
+		try{
+			var script = myCodeMirror.getValue().trim();
+			painter = eval(parser.parse(script,parser.evaluate,'g'));
 			
+			d3.select("svg").selectAll("line").remove();
+			d3.select("svg").selectAll("g").remove();
+			painter(frame,lineGraph,0);
+		}catch(err)
+		{
+			console.log("Error while interpreting.")
+		}
+	}
+	
+	var updateBindings = function(){
+		
+		$(".cm-keyword,.cm-builtin").filter(function() {
+		    return $(this).css('visibility') != 'hidden' && $(this).css('display') != 'none';
+		}).each(function(i,el){
+			$(el).hover(function(){
+				var id = "#g"+i;
+				d3.select(id).selectAll("line").style("stroke", "rgb(120,0,0)");
+			},function(){
+				var id = "#g"+i;
+				d3.select(id).selectAll("line").style("stroke", "rgb(6,120,155)");
+			});
 		});
 		
 	}
 	
-	var cenas = function(){
+	var init = function(){
 		
-		myCodeMirror = CodeMirror.fromTextArea(document.getElementById("code"),{'theme':'blackboard'});
+		myCodeMirror = CodeMirror.fromTextArea(document.getElementById("code"),
+											   {'theme':'blackboard',
+												'onChange':interpret,
+												'mode':'picture-language',
+												'autoClearEmptyLines':true,
+												'gutter':true,
+												'onUpdate':updateBindings,
+												'lineNumbers':true,
+												'matchBrackets':true});
 		
-		init();
-      //picture.draw_line(picture.make_vect(0,0),picture.make_vect(100,100),lineGraph);
-
-	  //picture.draw_line(picture.make_vect(0,0),picture.make_vect(100,100),lineGraph);
-	
-		console.log(parser.parse("(beside wave wave)",parser.evaluate,'g'));
+		lineGraph = d3.select("#painting_area")
+				  	  .append("svg:svg")
+					  .attr("width", size)   
+					  .attr("height", size);
 		
-	
-		painter = eval(parser.parse("(beside wave wave)",parser.evaluate,'g')) //picture.segments__GT_painter(picture.wave_segments,lineGraph);
-		
-		//painter = picture.below(picture.beside(painter,painter),picture.beside(painter,painter));
-		
-		//painter = picture.rotate90(picture.below(picture.beside(p,p),picture.beside(p,p)));
-		
-		painter(frame,lineGraph,0);
+		interpret();
 	}
     </script>
 </head>
-<body onload="cenas()">
+
+<body onload="init()">
 	
 	<header class="jumbotron subhead" id="overview">
 	  <div class="container">
 	    <h1>SICP: Picture Language</h1>
-	    <p class="lead">Implementation in ClojureScript.</p>
+	    <p class="lead">An interactive implementation of SICP picture language.</p>
 	  </div>
 	</header>
-	
-	<h1 id="title"></h1>
-	
-	<div class="">
+
+	<div class="container">
 	<div class="row">
-	
 		<div class="span6">
 			<div id="wrapper">
 		    	<div id="painting_area"></div>
 			</div>
+		</div>
+		
+		<div class="span6">
+			<div class="tabbable tabs-right">
+		<ul class="nav nav-tabs" id="myTab">
+		  <li class="active"><a href="#codetab">Code</a></li>
+		  <li><a href="#doctab">Docs</a></li>
+		</ul>
+		<div class="tab-content">
+		  <div class="tab-pane active" id="codetab">
+		  	
+			 <fieldset>
+			 	<textarea id="code" name="code">(beside wave wave)</textarea>
+			     <!--<button class="btn" onclick="interpret()">Submit</button>-->
+			 </fieldset>
+			
+		  </div>
+		  <div class="tab-pane" id="doctab">
+			<h4>Primitive</h4>
+			<ul>
+				<li>wave</li>
+			</ul>
+			<h4>Methods of composition</h4>
+			<ul>
+				<li>(rotate90 x)</li>
+				<li>(flip-vert x)</li>
+				<li>(shrink-to-upper-right x)</li>
+				<li>(squash-inwards x)</li>
+				<li>(beside x y)</li>
+				<li>(below x y)</li>
+			</ul>
+		  </div>
+		</div>
+		</div>
+		</div>
+		
+		<script>
+		$('#myTab a').click(function(e) {
+		    e.preventDefault();
+		    $(this).tab('show');
+		})
+		</script>
 	
-			<div id="buttons">
-				<button onclick="split()">Beside</button>
-				<button onclick="below()">Below</button>
-				<button onclick="rotate90()">Rotate90</button>
-				<button onclick="shrink_to_upper_right()">Shrink</button>
-				<button onclick="squash_inwards()">Squash</button>
-				<button onclick="flip_vert()">Flip Vert</button>
-				<button onclick="restart()">Restart</button>
-			</div>
-		</div>
-		
-		<div class="span4">
-				<fieldset>
-					<textarea id="code" name="code">						
-(beside wave wave)
-					</textarea>
-				    <button class="btn" onclick="interpret()">Submit</button>
-				</fieldset>
-		</div>
-		
-		<div id="code2">
-
-		</div>
-		
 	</div>
 	</div>
 	
@@ -237,11 +191,14 @@
 
 		<a href="https://github.com/rquintas/picture-language"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
 		
-		<a href="http://rquintas.net">Ricardo Quintas</a>
-		<p>Github</p>
+		By <a href="http://rquintas.net">Ricardo Quintas</a>
+		Using 
+		<p>ClojureScript</p>
 		<p>Codemirror</p>
 		<p>d3</p>
-		<p>ClojureScript</p>
+		<p>Bootstrap</p>
+		<p>Jquery</p>
+		
 		
 	</div>
 
