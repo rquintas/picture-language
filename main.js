@@ -20851,8 +20851,8 @@ picture.end_segment = function end_segment(segment) {
   return cljs.core.last.call(null, segment)
 };
 picture.draw_line = function draw_line(v1, v2, graphics) {
-  var line__6203 = graphics.append("svg:line");
-  return line__6203.attr("x1", picture.xcor_vect.call(null, v1)).attr("y1", picture.ycor_vect.call(null, v1)).attr("x2", picture.xcor_vect.call(null, v2)).attr("y2", picture.ycor_vect.call(null, v2)).style("stroke", "rgb(6,120,155)")
+  var line__6201 = graphics.append("svg:line");
+  return line__6201.attr("x1", picture.xcor_vect.call(null, v1)).attr("y1", picture.ycor_vect.call(null, v1)).attr("x2", picture.xcor_vect.call(null, v2)).attr("y2", picture.ycor_vect.call(null, v2)).style("stroke", "rgb(6,120,155)")
 };
 goog.exportSymbol("picture.draw_line", picture.draw_line);
 picture.draw_image = function draw_image(frame, image, graphics) {
@@ -20861,17 +20861,17 @@ picture.draw_image = function draw_image(frame, image, graphics) {
 picture.draw_as_group = function draw_as_group(graphics, id) {
   return graphics.append("svg:g").attr("id", id)
 };
-picture.segments__GT_painter = function segments__GT_painter(segment_list, id) {
+picture.segments__GT_painter = function segments__GT_painter(id, segment_list) {
   return function(frame, g) {
-    var graphics__6206 = picture.draw_as_group.call(null, g, id);
-    var segments__6207 = segment_list;
+    var graphics__6204 = picture.draw_as_group.call(null, g, id);
+    var segments__6205 = segment_list;
     while(true) {
-      if(cljs.core.empty_QMARK_.call(null, segments__6207)) {
+      if(cljs.core.empty_QMARK_.call(null, segments__6205)) {
         return segment_list
       }else {
-        picture.draw_line.call(null, picture.frame_coord_map.call(null, frame).call(null, picture.start_segment.call(null, cljs.core.first.call(null, segments__6207))), picture.frame_coord_map.call(null, frame).call(null, picture.end_segment.call(null, cljs.core.first.call(null, segments__6207))), graphics__6206);
-        var G__6208 = cljs.core.rest.call(null, segments__6207);
-        segments__6207 = G__6208;
+        picture.draw_line.call(null, picture.frame_coord_map.call(null, frame).call(null, picture.start_segment.call(null, cljs.core.first.call(null, segments__6205))), picture.frame_coord_map.call(null, frame).call(null, picture.end_segment.call(null, cljs.core.first.call(null, segments__6205))), graphics__6204);
+        var G__6206 = cljs.core.rest.call(null, segments__6205);
+        segments__6205 = G__6206;
         continue
       }
       break
@@ -20884,46 +20884,46 @@ picture.image__GT_painter = function image__GT_painter(image) {
   }
 };
 picture.outline_painter = function outline_painter() {
-  var segment_list__6210 = cljs.core.list.call(null, picture.make_segment.call(null, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 0, 1)), picture.make_segment.call(null, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 1, 0)), picture.make_segment.call(null, picture.make_vect.call(null, 1, 1), picture.make_vect.call(null, 0, 1)), picture.make_segment.call(null, picture.make_vect.call(null, 1, 0), picture.make_vect.call(null, 1, 1)));
-  return picture.segments__GT_painter.call(null, segment_list__6210)
+  var segment_list__6208 = cljs.core.list.call(null, picture.make_segment.call(null, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 0, 1)), picture.make_segment.call(null, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 1, 0)), picture.make_segment.call(null, picture.make_vect.call(null, 1, 1), picture.make_vect.call(null, 0, 1)), picture.make_segment.call(null, picture.make_vect.call(null, 1, 0), picture.make_vect.call(null, 1, 1)));
+  return picture.segments__GT_painter.call(null, segment_list__6208)
 };
 picture.transform_painter = function transform_painter(painter, origin, corner1, corner2, id) {
   return function(frame, graphics) {
-    var m__6213 = picture.frame_coord_map.call(null, frame);
-    var new_origin__6214 = m__6213.call(null, origin);
-    return painter.call(null, picture.make_frame.call(null, new_origin__6214, picture.sub_vect.call(null, m__6213.call(null, corner1), new_origin__6214), picture.sub_vect.call(null, m__6213.call(null, corner2), new_origin__6214)), picture.draw_as_group.call(null, graphics, id))
+    var m__6211 = picture.frame_coord_map.call(null, frame);
+    var new_origin__6212 = m__6211.call(null, origin);
+    return painter.call(null, picture.make_frame.call(null, new_origin__6212, picture.sub_vect.call(null, m__6211.call(null, corner1), new_origin__6212), picture.sub_vect.call(null, m__6211.call(null, corner2), new_origin__6212)), picture.draw_as_group.call(null, graphics, id))
   }
 };
-picture.flip_vert = function flip_vert(painter, id) {
+picture.flip_vert = function flip_vert(id, painter) {
   return picture.transform_painter.call(null, painter, picture.make_vect.call(null, 0, 1), picture.make_vect.call(null, 1, 1), picture.make_vect.call(null, 0, 0), id)
 };
-picture.shrink_to_upper_right = function shrink_to_upper_right(painter, id) {
+picture.shrink_to_upper_right = function shrink_to_upper_right(id, painter) {
   return picture.transform_painter.call(null, painter, picture.make_vect.call(null, 0.5, 0.5), picture.make_vect.call(null, 1, 0.5), picture.make_vect.call(null, 0.5, 1), id)
 };
-picture.rotate90 = function rotate90(painter, id) {
+picture.rotate90 = function rotate90(id, painter) {
   return picture.transform_painter.call(null, painter, picture.make_vect.call(null, 1, 0), picture.make_vect.call(null, 1, 1), picture.make_vect.call(null, 0, 0), id)
 };
-picture.squash_inwards = function squash_inwards(painter, id) {
+picture.squash_inwards = function squash_inwards(id, painter) {
   return picture.transform_painter.call(null, painter, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 0.65, 0.35), picture.make_vect.call(null, 0.35, 0.65), id)
 };
-picture.beside = function beside(painter1, painter2, id) {
-  var split_point__6219 = picture.make_vect.call(null, 0.5, 0);
-  var paint_left__6220 = picture.transform_painter.call(null, painter1, picture.make_vect.call(null, 0, 0), split_point__6219, picture.make_vect.call(null, 0, 1), id);
-  var paint_right__6221 = picture.transform_painter.call(null, painter2, split_point__6219, picture.make_vect.call(null, 1, 0), picture.make_vect.call(null, 0.5, 1), id);
+picture.beside = function beside(id, painter1, painter2) {
+  var split_point__6217 = picture.make_vect.call(null, 0.5, 0);
+  var paint_left__6218 = picture.transform_painter.call(null, painter1, picture.make_vect.call(null, 0, 0), split_point__6217, picture.make_vect.call(null, 0, 1), id);
+  var paint_right__6219 = picture.transform_painter.call(null, painter2, split_point__6217, picture.make_vect.call(null, 1, 0), picture.make_vect.call(null, 0.5, 1), id);
   return function(frame, graphics) {
-    var group__6222 = picture.draw_as_group.call(null, graphics, id);
-    paint_left__6220.call(null, frame, group__6222);
-    return paint_right__6221.call(null, frame, group__6222)
+    var group__6220 = picture.draw_as_group.call(null, graphics, id);
+    paint_left__6218.call(null, frame, group__6220);
+    return paint_right__6219.call(null, frame, group__6220)
   }
 };
-picture.below = function below(painter1, painter2, id) {
-  var split_point__6227 = picture.make_vect.call(null, 0, 0.5);
-  var paint_up__6228 = picture.transform_painter.call(null, painter1, split_point__6227, picture.make_vect.call(null, 1, 0.5), picture.make_vect.call(null, 0, 1), id);
-  var paint_down__6229 = picture.transform_painter.call(null, painter2, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 1, 0), split_point__6227, id);
+picture.below = function below(id, painter1, painter2) {
+  var split_point__6225 = picture.make_vect.call(null, 0, 0.5);
+  var paint_up__6226 = picture.transform_painter.call(null, painter1, split_point__6225, picture.make_vect.call(null, 1, 0.5), picture.make_vect.call(null, 0, 1), id);
+  var paint_down__6227 = picture.transform_painter.call(null, painter2, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 1, 0), split_point__6225, id);
   return function(frame, graphics) {
-    var group__6230 = picture.draw_as_group.call(null, graphics, id);
-    paint_up__6228.call(null, frame, group__6230);
-    return paint_down__6229.call(null, frame, group__6230)
+    var group__6228 = picture.draw_as_group.call(null, graphics, id);
+    paint_up__6226.call(null, frame, group__6228);
+    return paint_down__6227.call(null, frame, group__6228)
   }
 };
 picture.wave_segments = cljs.core.list.call(null, picture.make_segment.call(null, picture.make_vect.call(null, 0.0060, 0.84), picture.make_vect.call(null, 0.155, 0.591)), picture.make_segment.call(null, picture.make_vect.call(null, 0.0060, 0.635), picture.make_vect.call(null, 0.155, 0.392)), picture.make_segment.call(null, picture.make_vect.call(null, 0.304, 0.646), picture.make_vect.call(null, 0.155, 0.591)), picture.make_segment.call(null, picture.make_vect.call(null, 0.298, 0.591), picture.make_vect.call(null, 
@@ -21138,7 +21138,7 @@ parser.parse = function parse(n, evalFunction, groupPrefix) {
   var tok__6150 = tokens__6149;
   while(true) {
     if(cljs.core.empty_QMARK_.call(null, tok__6150)) {
-      return cljs.core.apply.call(null, cljs.core.str, cljs.core.butlast.call(null, parser.walk.call(null, parser.pop_BANG_.call(null, stack__6148), 0, groupPrefix)))
+      return parser.numberGroups.call(null, cljs.core.apply.call(null, cljs.core.str, parser.pop_BANG_.call(null, stack__6148)), groupPrefix)
     }else {
       evalFunction.call(null, cljs.core.last.call(null, tok__6150), stack__6148);
       var G__6151 = cljs.core.butlast.call(null, tok__6150);
@@ -21173,35 +21173,52 @@ parser.walk = function walk(l, v, prefix) {
     }
   }
 };
+parser.numberGroups = function numberGroups(sentence, prefix) {
+  var s__6163 = sentence;
+  var v__6164 = 0;
+  while(true) {
+    var idx__6165 = s__6163.indexOf("%G%");
+    if(idx__6165 > -1) {
+      var G__6166 = clojure.string.replace_first.call(null, s__6163, "%G%", [cljs.core.str("'"), cljs.core.str(prefix), cljs.core.str(v__6164), cljs.core.str("'")].join(""));
+      var G__6167 = v__6164 + 1;
+      s__6163 = G__6166;
+      v__6164 = G__6167;
+      continue
+    }else {
+      return s__6163
+    }
+    break
+  }
+};
 parser.evaluate = function evaluate(tok, stack) {
   if(cljs.core._EQ_.call(null, "wave", tok)) {
-    return parser.push_BANG_.call(null, stack, "picture.segments__GT_painter(picture.wave_segments,%G%)")
+    return parser.push_BANG_.call(null, stack, "picture.segments__GT_painter(%G%,picture.wave_segments)")
   }else {
     if(cljs.core._EQ_.call(null, "squash-inwards", tok)) {
-      var a__6168 = parser.pop_BANG_.call(null, stack);
-      return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.squash_inwards(", a__6168, ",%G%)"))
+      var a__6176 = parser.pop_BANG_.call(null, stack);
+      return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.squash_inwards(%G%,", a__6176, ")"))
     }else {
       if(cljs.core._EQ_.call(null, "rotate90", tok)) {
-        var a__6169 = parser.pop_BANG_.call(null, stack);
-        return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.rotate90(", a__6169, ",%G%)"))
+        var a__6177 = parser.pop_BANG_.call(null, stack);
+        return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.rotate90(%G%,", a__6177, ")"))
       }else {
         if(cljs.core._EQ_.call(null, "flip-vert", tok)) {
-          var a__6170 = parser.pop_BANG_.call(null, stack);
-          return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.flip_vert(", a__6170, ",%G%)"))
+          var a__6178 = parser.pop_BANG_.call(null, stack);
+          return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.flip_vert(%G%,", a__6178, ")"))
         }else {
           if(cljs.core._EQ_.call(null, "shrink-to-upper-right", tok)) {
-            var a__6171 = parser.pop_BANG_.call(null, stack);
-            return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.shrink_to_upper_right(", a__6171, ",%G%)"))
+            var a__6179 = parser.pop_BANG_.call(null, stack);
+            return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.shrink_to_upper_right(%G%,", a__6179, ")"))
           }else {
             if(cljs.core._EQ_.call(null, "beside", tok)) {
-              var a__6172 = parser.pop_BANG_.call(null, stack);
-              var b__6173 = parser.pop_BANG_.call(null, stack);
-              return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.beside(", a__6172, ",", b__6173, ",%G%)"))
+              var a__6180 = parser.pop_BANG_.call(null, stack);
+              var b__6181 = parser.pop_BANG_.call(null, stack);
+              return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.beside(%G%,", a__6180, ",", b__6181, ")"))
             }else {
               if(cljs.core._EQ_.call(null, "below", tok)) {
-                var a__6174 = parser.pop_BANG_.call(null, stack);
-                var b__6175 = parser.pop_BANG_.call(null, stack);
-                return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.below(", a__6174, ",", b__6175, ",%G%)"))
+                var a__6182 = parser.pop_BANG_.call(null, stack);
+                var b__6183 = parser.pop_BANG_.call(null, stack);
+                return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.below(%G%,", a__6182, ",", b__6183, ")"))
               }else {
                 if("\ufdd0'else") {
                   return null
@@ -21221,30 +21238,30 @@ parser.evaluateHTML = function evaluateHTML(tok, stack) {
     return parser.push_BANG_.call(null, stack, "<span id=%G%>wave</span>")
   }else {
     if(cljs.core._EQ_.call(null, "squash-inwards", tok)) {
-      var a__6184 = parser.pop_BANG_.call(null, stack);
-      return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>squash-inwards</span> ", a__6184))
+      var a__6192 = parser.pop_BANG_.call(null, stack);
+      return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>squash-inwards</span> ", a__6192))
     }else {
       if(cljs.core._EQ_.call(null, "rotate90", tok)) {
-        var a__6185 = parser.pop_BANG_.call(null, stack);
-        return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>rotate90</span> ", a__6185))
+        var a__6193 = parser.pop_BANG_.call(null, stack);
+        return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>rotate90</span> ", a__6193))
       }else {
         if(cljs.core._EQ_.call(null, "flip-vert", tok)) {
-          var a__6186 = parser.pop_BANG_.call(null, stack);
-          return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>flip-vert</span> ", a__6186))
+          var a__6194 = parser.pop_BANG_.call(null, stack);
+          return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>flip-vert</span> ", a__6194))
         }else {
           if(cljs.core._EQ_.call(null, "shrink-to-upper-right", tok)) {
-            var a__6187 = parser.pop_BANG_.call(null, stack);
-            return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>shrink-to-upper-right</span> ", a__6187))
+            var a__6195 = parser.pop_BANG_.call(null, stack);
+            return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>shrink-to-upper-right</span> ", a__6195))
           }else {
             if(cljs.core._EQ_.call(null, "beside", tok)) {
-              var a__6188 = parser.pop_BANG_.call(null, stack);
-              var b__6189 = parser.pop_BANG_.call(null, stack);
-              return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>beside</span> ", a__6188, " ", b__6189))
+              var a__6196 = parser.pop_BANG_.call(null, stack);
+              var b__6197 = parser.pop_BANG_.call(null, stack);
+              return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>beside</span> ", a__6196, " ", b__6197))
             }else {
               if(cljs.core._EQ_.call(null, "below", tok)) {
-                var a__6190 = parser.pop_BANG_.call(null, stack);
-                var b__6191 = parser.pop_BANG_.call(null, stack);
-                return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>below</span> ", a__6190, " ", b__6191))
+                var a__6198 = parser.pop_BANG_.call(null, stack);
+                var b__6199 = parser.pop_BANG_.call(null, stack);
+                return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>below</span> ", a__6198, " ", b__6199))
               }else {
                 if("\ufdd0'else") {
                   return null

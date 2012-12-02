@@ -14,47 +14,35 @@
           tokens (.split (string/replace (string/replace n "(" " LPAREN ") ")" " RPAREN ") #"\s")]
         (loop [tok tokens]
             (if (empty? tok)
-                (apply str (butlast (walk (pop! stack) 0 groupPrefix)))
+                (numberGroups (apply str (pop! stack)) groupPrefix)
                 (doseq []
                     (evalFunction (last tok) stack)
                     (recur (butlast tok)))))))
-  
-(defn walk [l v prefix]
-  (if (and (list? l) (not (empty? l)))
-    (let [a (walk (first l) v prefix)
-          v2 (last a)
-          b (walk (rest l) v2 prefix)]
-		(concat (butlast a) b))
-    (if (empty? l)
-      (list "" v)
-      (if (> (.indexOf (str l) "%G%") -1)
-          (list (string/replace (str l) "%G%" (str "'" prefix v "'")) (inc v))
-          (list (str l) v)))))
           
-(defn numberGroups [sentence]
-    (loop [s sentence]
+(defn numberGroups [sentence prefix]
+    (loop [s sentence v 0]
         (let [idx (.indexOf s "%G%")]
             (if (> idx -1)
-                (recur (string/replace s "%G%" (str "'" prefix idx "'")))
-                sentence))))
+                (recur (string/replace-first s "%G%" (str "'" prefix v "'")) (inc v))
+                s))))
         
                              
 (defn evaluate [tok stack]
-    (cond (= "wave" tok) (push! stack "picture.segments__GT_painter(picture.wave_segments,%G%)")
+    (cond (= "wave" tok) (push! stack "picture.segments__GT_painter(%G%,picture.wave_segments)")
           (= "squash-inwards" tok) (let [a (pop! stack)]
-                              (push! stack (list "picture.squash_inwards(" a ",%G%)")))
+                              (push! stack (list "picture.squash_inwards(%G%," a ")")))
           (= "rotate90" tok) (let [a (pop! stack)]
-                              (push! stack (list "picture.rotate90(" a ",%G%)")))
+                              (push! stack (list "picture.rotate90(%G%," a ")")))
           (= "flip-vert" tok) (let [a (pop! stack)]
-                              (push! stack (list "picture.flip_vert(" a ",%G%)")))
+                              (push! stack (list "picture.flip_vert(%G%," a ")")))
           (= "shrink-to-upper-right" tok) (let [a (pop! stack)]
-                              (push! stack (list "picture.shrink_to_upper_right(" a ",%G%)")))
+                              (push! stack (list "picture.shrink_to_upper_right(%G%," a ")")))
           (= "beside" tok) (let [a (pop! stack)
                                  b (pop! stack)]
-                            (push! stack (list "picture.beside(" a "," b ",%G%)")))
+                            (push! stack (list "picture.beside(%G%," a "," b ")")))
           (= "below" tok) (let [a (pop! stack)
                                 b (pop! stack)]
-                            (push! stack (list "picture.below(" a "," b ",%G%)")))        
+                            (push! stack (list "picture.below(%G%," a "," b ")")))        
            :else nil))
 
 (defn evaluateHTML [tok stack]

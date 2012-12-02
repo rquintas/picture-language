@@ -67,7 +67,7 @@
     (-> graphics (.append "svg:g")
                  (.attr "id" id)))
 
-(defn segments->painter [segment-list id]
+(defn segments->painter [id segment-list]
     (fn [frame g]
     (let [graphics (draw-as-group g id)]
         (loop [segments segment-list]
@@ -100,35 +100,35 @@
                                          (sub-vect (m corner2) new-origin))
                                          (draw-as-group graphics id)))))
 
-(defn flip-vert [painter id]
+(defn flip-vert [id painter]
     (transform-painter painter
         (make-vect 0 1)
         (make-vect 1 1)
         (make-vect 0 0)
         id))
 
-(defn shrink-to-upper-right [painter id]
+(defn shrink-to-upper-right [id painter]
     (transform-painter painter
         (make-vect 0.5 0.5)
         (make-vect 1 0.5)
         (make-vect 0.5 1)
         id))
 
-(defn rotate90 [painter id]
+(defn rotate90 [id painter]
     (transform-painter painter
         (make-vect 1 0)
         (make-vect 1 1)
         (make-vect 0 0)
         id))
 
-(defn squash-inwards [painter id]
+(defn squash-inwards [id painter]
     (transform-painter painter
         (make-vect 0 0)
         (make-vect 0.65 0.35)
         (make-vect 0.35 0.65)
         id))
 
-(defn beside [painter1 painter2 id]
+(defn beside [id painter1 painter2]
     (let [split-point (make-vect 0.5 0.0)
           paint-left (transform-painter painter1 (make-vect 0 0)
                                                  split-point
@@ -143,7 +143,7 @@
                 (paint-left frame group)
                 (paint-right frame group)))))
 
-(defn below [painter1 painter2 id]
+(defn below [id painter1 painter2]
     (let [split-point (make-vect 0.0 0.5)
           paint-up (transform-painter painter1 split-point
                                                  (make-vect 1.0 0.5)
