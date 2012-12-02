@@ -20806,14 +20806,9 @@ cljs.core.UUID.prototype.toString = function() {
 cljs.core.UUID;
 goog.provide("picture");
 goog.require("cljs.core");
-picture.greet = function greet(n) {
-  return[cljs.core.str("Cenas "), cljs.core.str(n)].join("")
-};
-goog.exportSymbol("picture.greet", picture.greet);
 picture.make_vect = function make_vect(x, y) {
   return cljs.core.list.call(null, x, y)
 };
-goog.exportSymbol("picture.make_vect", picture.make_vect);
 picture.xcor_vect = function xcor_vect(v) {
   return cljs.core.first.call(null, v)
 };
@@ -20856,8 +20851,8 @@ picture.end_segment = function end_segment(segment) {
   return cljs.core.last.call(null, segment)
 };
 picture.draw_line = function draw_line(v1, v2, graphics) {
-  var line__6108 = graphics.append("svg:line");
-  return line__6108.attr("x1", picture.xcor_vect.call(null, v1)).attr("y1", picture.ycor_vect.call(null, v1)).attr("x2", picture.xcor_vect.call(null, v2)).attr("y2", picture.ycor_vect.call(null, v2)).style("stroke", "rgb(6,120,155)")
+  var line__6203 = graphics.append("svg:line");
+  return line__6203.attr("x1", picture.xcor_vect.call(null, v1)).attr("y1", picture.ycor_vect.call(null, v1)).attr("x2", picture.xcor_vect.call(null, v2)).attr("y2", picture.ycor_vect.call(null, v2)).style("stroke", "rgb(6,120,155)")
 };
 goog.exportSymbol("picture.draw_line", picture.draw_line);
 picture.draw_image = function draw_image(frame, image, graphics) {
@@ -20868,15 +20863,15 @@ picture.draw_as_group = function draw_as_group(graphics, id) {
 };
 picture.segments__GT_painter = function segments__GT_painter(segment_list, id) {
   return function(frame, g) {
-    var graphics__6111 = picture.draw_as_group.call(null, g, id);
-    var segments__6112 = segment_list;
+    var graphics__6206 = picture.draw_as_group.call(null, g, id);
+    var segments__6207 = segment_list;
     while(true) {
-      if(cljs.core.empty_QMARK_.call(null, segments__6112)) {
+      if(cljs.core.empty_QMARK_.call(null, segments__6207)) {
         return segment_list
       }else {
-        picture.draw_line.call(null, picture.frame_coord_map.call(null, frame).call(null, picture.start_segment.call(null, cljs.core.first.call(null, segments__6112))), picture.frame_coord_map.call(null, frame).call(null, picture.end_segment.call(null, cljs.core.first.call(null, segments__6112))), graphics__6111);
-        var G__6113 = cljs.core.rest.call(null, segments__6112);
-        segments__6112 = G__6113;
+        picture.draw_line.call(null, picture.frame_coord_map.call(null, frame).call(null, picture.start_segment.call(null, cljs.core.first.call(null, segments__6207))), picture.frame_coord_map.call(null, frame).call(null, picture.end_segment.call(null, cljs.core.first.call(null, segments__6207))), graphics__6206);
+        var G__6208 = cljs.core.rest.call(null, segments__6207);
+        segments__6207 = G__6208;
         continue
       }
       break
@@ -20889,14 +20884,14 @@ picture.image__GT_painter = function image__GT_painter(image) {
   }
 };
 picture.outline_painter = function outline_painter() {
-  var segment_list__6115 = cljs.core.list.call(null, picture.make_segment.call(null, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 0, 1)), picture.make_segment.call(null, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 1, 0)), picture.make_segment.call(null, picture.make_vect.call(null, 1, 1), picture.make_vect.call(null, 0, 1)), picture.make_segment.call(null, picture.make_vect.call(null, 1, 0), picture.make_vect.call(null, 1, 1)));
-  return picture.segments__GT_painter.call(null, segment_list__6115)
+  var segment_list__6210 = cljs.core.list.call(null, picture.make_segment.call(null, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 0, 1)), picture.make_segment.call(null, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 1, 0)), picture.make_segment.call(null, picture.make_vect.call(null, 1, 1), picture.make_vect.call(null, 0, 1)), picture.make_segment.call(null, picture.make_vect.call(null, 1, 0), picture.make_vect.call(null, 1, 1)));
+  return picture.segments__GT_painter.call(null, segment_list__6210)
 };
 picture.transform_painter = function transform_painter(painter, origin, corner1, corner2, id) {
   return function(frame, graphics) {
-    var m__6118 = picture.frame_coord_map.call(null, frame);
-    var new_origin__6119 = m__6118.call(null, origin);
-    return painter.call(null, picture.make_frame.call(null, new_origin__6119, picture.sub_vect.call(null, m__6118.call(null, corner1), new_origin__6119), picture.sub_vect.call(null, m__6118.call(null, corner2), new_origin__6119)), picture.draw_as_group.call(null, graphics, id))
+    var m__6213 = picture.frame_coord_map.call(null, frame);
+    var new_origin__6214 = m__6213.call(null, origin);
+    return painter.call(null, picture.make_frame.call(null, new_origin__6214, picture.sub_vect.call(null, m__6213.call(null, corner1), new_origin__6214), picture.sub_vect.call(null, m__6213.call(null, corner2), new_origin__6214)), picture.draw_as_group.call(null, graphics, id))
   }
 };
 picture.flip_vert = function flip_vert(painter, id) {
@@ -20912,23 +20907,23 @@ picture.squash_inwards = function squash_inwards(painter, id) {
   return picture.transform_painter.call(null, painter, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 0.65, 0.35), picture.make_vect.call(null, 0.35, 0.65), id)
 };
 picture.beside = function beside(painter1, painter2, id) {
-  var split_point__6124 = picture.make_vect.call(null, 0.5, 0);
-  var paint_left__6125 = picture.transform_painter.call(null, painter1, picture.make_vect.call(null, 0, 0), split_point__6124, picture.make_vect.call(null, 0, 1), id);
-  var paint_right__6126 = picture.transform_painter.call(null, painter2, split_point__6124, picture.make_vect.call(null, 1, 0), picture.make_vect.call(null, 0.5, 1), id);
+  var split_point__6219 = picture.make_vect.call(null, 0.5, 0);
+  var paint_left__6220 = picture.transform_painter.call(null, painter1, picture.make_vect.call(null, 0, 0), split_point__6219, picture.make_vect.call(null, 0, 1), id);
+  var paint_right__6221 = picture.transform_painter.call(null, painter2, split_point__6219, picture.make_vect.call(null, 1, 0), picture.make_vect.call(null, 0.5, 1), id);
   return function(frame, graphics) {
-    var group__6127 = picture.draw_as_group.call(null, graphics, id);
-    paint_left__6125.call(null, frame, group__6127);
-    return paint_right__6126.call(null, frame, group__6127)
+    var group__6222 = picture.draw_as_group.call(null, graphics, id);
+    paint_left__6220.call(null, frame, group__6222);
+    return paint_right__6221.call(null, frame, group__6222)
   }
 };
 picture.below = function below(painter1, painter2, id) {
-  var split_point__6132 = picture.make_vect.call(null, 0, 0.5);
-  var paint_up__6133 = picture.transform_painter.call(null, painter1, split_point__6132, picture.make_vect.call(null, 1, 0.5), picture.make_vect.call(null, 0, 1), id);
-  var paint_down__6134 = picture.transform_painter.call(null, painter2, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 1, 0), split_point__6132, id);
+  var split_point__6227 = picture.make_vect.call(null, 0, 0.5);
+  var paint_up__6228 = picture.transform_painter.call(null, painter1, split_point__6227, picture.make_vect.call(null, 1, 0.5), picture.make_vect.call(null, 0, 1), id);
+  var paint_down__6229 = picture.transform_painter.call(null, painter2, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 1, 0), split_point__6227, id);
   return function(frame, graphics) {
-    var group__6135 = picture.draw_as_group.call(null, graphics, id);
-    paint_up__6133.call(null, frame, group__6135);
-    return paint_down__6134.call(null, frame, group__6135)
+    var group__6230 = picture.draw_as_group.call(null, graphics, id);
+    paint_up__6228.call(null, frame, group__6230);
+    return paint_down__6229.call(null, frame, group__6230)
   }
 };
 picture.wave_segments = cljs.core.list.call(null, picture.make_segment.call(null, picture.make_vect.call(null, 0.0060, 0.84), picture.make_vect.call(null, 0.155, 0.591)), picture.make_segment.call(null, picture.make_vect.call(null, 0.0060, 0.635), picture.make_vect.call(null, 0.155, 0.392)), picture.make_segment.call(null, picture.make_vect.call(null, 0.304, 0.646), picture.make_vect.call(null, 0.155, 0.591)), picture.make_segment.call(null, picture.make_vect.call(null, 0.298, 0.591), picture.make_vect.call(null, 
@@ -20936,19 +20931,17 @@ picture.wave_segments = cljs.core.list.call(null, picture.make_segment.call(null
 picture.make_vect.call(null, 0.403, 0), picture.make_vect.call(null, 0.502, 0.293)), picture.make_segment.call(null, picture.make_vect.call(null, 0.502, 0.293), picture.make_vect.call(null, 0.602, 0)), picture.make_segment.call(null, picture.make_vect.call(null, 0.348, 0.845), picture.make_vect.call(null, 0.403, 0.999)), picture.make_segment.call(null, picture.make_vect.call(null, 0.602, 0.999), picture.make_vect.call(null, 0.652, 0.845)), picture.make_segment.call(null, picture.make_vect.call(null, 
 0.652, 0.845), picture.make_vect.call(null, 0.602, 0.646)), picture.make_segment.call(null, picture.make_vect.call(null, 0.602, 0.646), picture.make_vect.call(null, 0.751, 0.646)), picture.make_segment.call(null, picture.make_vect.call(null, 0.751, 0.646), picture.make_vect.call(null, 0.999, 0.343)), picture.make_segment.call(null, picture.make_vect.call(null, 0.751, 0), picture.make_vect.call(null, 0.597, 0.442)), picture.make_segment.call(null, picture.make_vect.call(null, 0.597, 0.442), picture.make_vect.call(null, 
 0.999, 0.144)));
-goog.provide("parser");
+goog.provide("clojure.string");
 goog.require("cljs.core");
 goog.require("goog.string.StringBuffer");
 goog.require("goog.string");
-parser.pop_BANG_ = function pop_BANG_(stack) {
-  var first__6108 = cljs.core.first.call(null, cljs.core.deref.call(null, stack));
-  cljs.core.swap_BANG_.call(null, stack, cljs.core.pop);
-  return first__6108
+clojure.string.seq_reverse = function seq_reverse(coll) {
+  return cljs.core.reduce.call(null, cljs.core.conj, cljs.core.List.EMPTY, coll)
 };
-parser.push_BANG_ = function push_BANG_(stack, item) {
-  return cljs.core.swap_BANG_.call(null, stack, cljs.core.conj, item)
+clojure.string.reverse = function reverse(s) {
+  return s.split("").reverse().join("")
 };
-parser.replace = function replace(s, match, replacement) {
+clojure.string.replace = function replace(s, match, replacement) {
   if(cljs.core.string_QMARK_.call(null, match)) {
     return s.replace(new RegExp(goog.string.regExpEscape(match), "g"), replacement)
   }else {
@@ -20963,102 +20956,220 @@ parser.replace = function replace(s, match, replacement) {
     }
   }
 };
-parser.parse = function parse(n) {
-  var stack__6112 = cljs.core.atom.call(null, cljs.core.List.EMPTY);
-  var tokens__6113 = parser.replace.call(null, parser.replace.call(null, n, "(", " LPAREN "), ")", " RPAREN ").split(/\s/);
-  var tok__6114 = tokens__6113;
-  while(true) {
-    if(cljs.core.empty_QMARK_.call(null, tok__6114)) {
-      return cljs.core.apply.call(null, cljs.core.str, cljs.core.butlast.call(null, parser.walk.call(null, parser.pop_BANG_.call(null, stack__6112), 0)))
+clojure.string.replace_first = function replace_first(s, match, replacement) {
+  return s.replace(match, replacement)
+};
+clojure.string.join = function() {
+  var join = null;
+  var join__1 = function(coll) {
+    return cljs.core.apply.call(null, cljs.core.str, coll)
+  };
+  var join__2 = function(separator, coll) {
+    return cljs.core.apply.call(null, cljs.core.str, cljs.core.interpose.call(null, separator, coll))
+  };
+  join = function(separator, coll) {
+    switch(arguments.length) {
+      case 1:
+        return join__1.call(this, separator);
+      case 2:
+        return join__2.call(this, separator, coll)
+    }
+    throw"Invalid arity: " + arguments.length;
+  };
+  join.cljs$lang$arity$1 = join__1;
+  join.cljs$lang$arity$2 = join__2;
+  return join
+}();
+clojure.string.upper_case = function upper_case(s) {
+  return s.toUpperCase()
+};
+clojure.string.lower_case = function lower_case(s) {
+  return s.toLowerCase()
+};
+clojure.string.capitalize = function capitalize(s) {
+  if(cljs.core.count.call(null, s) < 2) {
+    return clojure.string.upper_case.call(null, s)
+  }else {
+    return[cljs.core.str(clojure.string.upper_case.call(null, cljs.core.subs.call(null, s, 0, 1))), cljs.core.str(clojure.string.lower_case.call(null, cljs.core.subs.call(null, s, 1)))].join("")
+  }
+};
+clojure.string.split = function() {
+  var split = null;
+  var split__2 = function(s, re) {
+    return cljs.core.vec.call(null, [cljs.core.str(s)].join("").split(re))
+  };
+  var split__3 = function(s, re, limit) {
+    if(limit < 1) {
+      return cljs.core.vec.call(null, [cljs.core.str(s)].join("").split(re))
     }else {
-      parser.evaluate.call(null, cljs.core.last.call(null, tok__6114), stack__6112);
-      var G__6115 = cljs.core.butlast.call(null, tok__6114);
-      tok__6114 = G__6115;
+      var s__6237 = s;
+      var limit__6238 = limit;
+      var parts__6239 = cljs.core.PersistentVector.EMPTY;
+      while(true) {
+        if(cljs.core._EQ_.call(null, limit__6238, 1)) {
+          return cljs.core.conj.call(null, parts__6239, s__6237)
+        }else {
+          var temp__3971__auto____6240 = cljs.core.re_find.call(null, re, s__6237);
+          if(cljs.core.truth_(temp__3971__auto____6240)) {
+            var m__6241 = temp__3971__auto____6240;
+            var index__6242 = s__6237.indexOf(m__6241);
+            var G__6243 = s__6237.substring(index__6242 + cljs.core.count.call(null, m__6241));
+            var G__6244 = limit__6238 - 1;
+            var G__6245 = cljs.core.conj.call(null, parts__6239, s__6237.substring(0, index__6242));
+            s__6237 = G__6243;
+            limit__6238 = G__6244;
+            parts__6239 = G__6245;
+            continue
+          }else {
+            return cljs.core.conj.call(null, parts__6239, s__6237)
+          }
+        }
+        break
+      }
+    }
+  };
+  split = function(s, re, limit) {
+    switch(arguments.length) {
+      case 2:
+        return split__2.call(this, s, re);
+      case 3:
+        return split__3.call(this, s, re, limit)
+    }
+    throw"Invalid arity: " + arguments.length;
+  };
+  split.cljs$lang$arity$2 = split__2;
+  split.cljs$lang$arity$3 = split__3;
+  return split
+}();
+clojure.string.split_lines = function split_lines(s) {
+  return clojure.string.split.call(null, s, /\n|\r\n/)
+};
+clojure.string.trim = function trim(s) {
+  return goog.string.trim(s)
+};
+clojure.string.triml = function triml(s) {
+  return goog.string.trimLeft(s)
+};
+clojure.string.trimr = function trimr(s) {
+  return goog.string.trimRight(s)
+};
+clojure.string.trim_newline = function trim_newline(s) {
+  var index__6249 = s.length;
+  while(true) {
+    if(index__6249 === 0) {
+      return""
+    }else {
+      var ch__6250 = cljs.core._lookup.call(null, s, index__6249 - 1, null);
+      if(function() {
+        var or__3824__auto____6251 = cljs.core._EQ_.call(null, ch__6250, "\n");
+        if(or__3824__auto____6251) {
+          return or__3824__auto____6251
+        }else {
+          return cljs.core._EQ_.call(null, ch__6250, "\r")
+        }
+      }()) {
+        var G__6252 = index__6249 - 1;
+        index__6249 = G__6252;
+        continue
+      }else {
+        return s.substring(0, index__6249)
+      }
+    }
+    break
+  }
+};
+clojure.string.blank_QMARK_ = function blank_QMARK_(s) {
+  var s__6256 = [cljs.core.str(s)].join("");
+  if(cljs.core.truth_(function() {
+    var or__3824__auto____6257 = cljs.core.not.call(null, s__6256);
+    if(or__3824__auto____6257) {
+      return or__3824__auto____6257
+    }else {
+      var or__3824__auto____6258 = cljs.core._EQ_.call(null, "", s__6256);
+      if(or__3824__auto____6258) {
+        return or__3824__auto____6258
+      }else {
+        return cljs.core.re_matches.call(null, /\s+/, s__6256)
+      }
+    }
+  }())) {
+    return true
+  }else {
+    return false
+  }
+};
+clojure.string.escape = function escape(s, cmap) {
+  var buffer__6265 = new goog.string.StringBuffer;
+  var length__6266 = s.length;
+  var index__6267 = 0;
+  while(true) {
+    if(cljs.core._EQ_.call(null, length__6266, index__6267)) {
+      return buffer__6265.toString()
+    }else {
+      var ch__6268 = s.charAt(index__6267);
+      var temp__3971__auto____6269 = cljs.core._lookup.call(null, cmap, ch__6268, null);
+      if(cljs.core.truth_(temp__3971__auto____6269)) {
+        var replacement__6270 = temp__3971__auto____6269;
+        buffer__6265.append([cljs.core.str(replacement__6270)].join(""))
+      }else {
+        buffer__6265.append(ch__6268)
+      }
+      var G__6271 = index__6267 + 1;
+      index__6267 = G__6271;
       continue
     }
     break
   }
 };
-goog.exportSymbol("parser.parse", parser.parse);
-parser.parseToHtml = function parseToHtml(n) {
-  var stack__6119 = cljs.core.atom.call(null, cljs.core.List.EMPTY);
-  var tokens__6120 = parser.replace.call(null, parser.replace.call(null, n, "(", " LPAREN "), ")", " RPAREN ").split(/\s/);
-  var tok__6121 = tokens__6120;
+goog.provide("parser");
+goog.require("cljs.core");
+goog.require("clojure.string");
+parser.pop_BANG_ = function pop_BANG_(stack) {
+  var first__6144 = cljs.core.first.call(null, cljs.core.deref.call(null, stack));
+  cljs.core.swap_BANG_.call(null, stack, cljs.core.pop);
+  return first__6144
+};
+parser.push_BANG_ = function push_BANG_(stack, item) {
+  return cljs.core.swap_BANG_.call(null, stack, cljs.core.conj, item)
+};
+parser.parse = function parse(n, evalFunction, groupPrefix) {
+  var stack__6148 = cljs.core.atom.call(null, cljs.core.List.EMPTY);
+  var tokens__6149 = clojure.string.replace.call(null, clojure.string.replace.call(null, n, "(", " LPAREN "), ")", " RPAREN ").split(/\s/);
+  var tok__6150 = tokens__6149;
   while(true) {
-    if(cljs.core.empty_QMARK_.call(null, tok__6121)) {
-      return cljs.core.apply.call(null, cljs.core.str, cljs.core.butlast.call(null, parser.walkc.call(null, parser.pop_BANG_.call(null, stack__6119), 0)))
+    if(cljs.core.empty_QMARK_.call(null, tok__6150)) {
+      return cljs.core.apply.call(null, cljs.core.str, cljs.core.butlast.call(null, parser.walk.call(null, parser.pop_BANG_.call(null, stack__6148), 0, groupPrefix)))
     }else {
-      parser.evaluateHTML.call(null, cljs.core.last.call(null, tok__6121), stack__6119);
-      var G__6122 = cljs.core.butlast.call(null, tok__6121);
-      tok__6121 = G__6122;
+      evalFunction.call(null, cljs.core.last.call(null, tok__6150), stack__6148);
+      var G__6151 = cljs.core.butlast.call(null, tok__6150);
+      tok__6150 = G__6151;
       continue
     }
     break
   }
 };
-goog.exportSymbol("parser.parseToHtml", parser.parseToHtml);
-parser.parse2 = function parse2(n) {
-  var stack__6126 = cljs.core.atom.call(null, cljs.core.List.EMPTY);
-  var tokens__6127 = parser.replace.call(null, parser.replace.call(null, n, "(", " LPAREN "), ")", " RPAREN ").split(/\s/);
-  var tok__6128 = tokens__6127;
-  while(true) {
-    if(cljs.core.empty_QMARK_.call(null, tok__6128)) {
-      return stack__6126
-    }else {
-      parser.evaluate.call(null, cljs.core.last.call(null, tok__6128), stack__6126);
-      var G__6129 = cljs.core.butlast.call(null, tok__6128);
-      tok__6128 = G__6129;
-      continue
-    }
-    break
-  }
-};
-goog.exportSymbol("parser.parse2", parser.parse2);
-parser.parse3 = function parse3(n) {
-  var stack__6132 = cljs.core.atom.call(null, cljs.core.List.EMPTY);
-  var tokens__6133 = parser.replace.call(null, parser.replace.call(null, n, "(", " LPAREN "), ")", " RPAREN ").split(/\s/);
-  return tokens__6133
-};
-goog.exportSymbol("parser.parse3", parser.parse3);
-parser.walk = function walk(l, v) {
+parser.walk = function walk(l, v, prefix) {
   if(function() {
-    var and__3822__auto____6138 = cljs.core.list_QMARK_.call(null, l);
-    if(and__3822__auto____6138) {
+    var and__3822__auto____6156 = cljs.core.list_QMARK_.call(null, l);
+    if(and__3822__auto____6156) {
       return!cljs.core.empty_QMARK_.call(null, l)
     }else {
-      return and__3822__auto____6138
+      return and__3822__auto____6156
     }
   }()) {
-    var a__6139 = walk.call(null, cljs.core.first.call(null, l), v);
-    var v2__6140 = cljs.core.last.call(null, a__6139);
-    var b__6141 = walk.call(null, cljs.core.rest.call(null, l), v2__6140);
-    return cljs.core.concat.call(null, cljs.core.butlast.call(null, a__6139), b__6141)
+    var a__6157 = walk.call(null, cljs.core.first.call(null, l), v, prefix);
+    var v2__6158 = cljs.core.last.call(null, a__6157);
+    var b__6159 = walk.call(null, cljs.core.rest.call(null, l), v2__6158, prefix);
+    return cljs.core.concat.call(null, cljs.core.butlast.call(null, a__6157), b__6159)
   }else {
     if(cljs.core.empty_QMARK_.call(null, l)) {
-      return cljs.core.list.call(null, "", v + 1)
+      return cljs.core.list.call(null, "", v)
     }else {
-      return cljs.core.list.call(null, parser.replace.call(null, [cljs.core.str(l)].join(""), "%G%", [cljs.core.str("'g"), cljs.core.str(v), cljs.core.str("'")].join("")), v + 1)
-    }
-  }
-};
-parser.walkc = function walkc(l, v) {
-  if(function() {
-    var and__3822__auto____6146 = cljs.core.list_QMARK_.call(null, l);
-    if(and__3822__auto____6146) {
-      return!cljs.core.empty_QMARK_.call(null, l)
-    }else {
-      return and__3822__auto____6146
-    }
-  }()) {
-    var a__6147 = walkc.call(null, cljs.core.first.call(null, l), v);
-    var v2__6148 = cljs.core.last.call(null, a__6147);
-    var b__6149 = walkc.call(null, cljs.core.rest.call(null, l), v2__6148);
-    return cljs.core.concat.call(null, cljs.core.butlast.call(null, a__6147), b__6149)
-  }else {
-    if(cljs.core.empty_QMARK_.call(null, l)) {
-      return cljs.core.list.call(null, "", v + 1)
-    }else {
-      return cljs.core.list.call(null, parser.replace.call(null, [cljs.core.str(l)].join(""), "%G%", [cljs.core.str("'c"), cljs.core.str(v), cljs.core.str("'")].join("")), v + 1)
+      if([cljs.core.str(l)].join("").indexOf("%G%") > -1) {
+        return cljs.core.list.call(null, clojure.string.replace.call(null, [cljs.core.str(l)].join(""), "%G%", [cljs.core.str("'"), cljs.core.str(prefix), cljs.core.str(v), cljs.core.str("'")].join("")), v + 1)
+      }else {
+        return cljs.core.list.call(null, [cljs.core.str(l)].join(""), v)
+      }
     }
   }
 };
@@ -21066,24 +21177,39 @@ parser.evaluate = function evaluate(tok, stack) {
   if(cljs.core._EQ_.call(null, "wave", tok)) {
     return parser.push_BANG_.call(null, stack, "picture.segments__GT_painter(picture.wave_segments,%G%)")
   }else {
-    if(cljs.core._EQ_.call(null, "rotate90", tok)) {
-      var a__6155 = parser.pop_BANG_.call(null, stack);
-      return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.rotate90(", a__6155, ",%G%)"))
+    if(cljs.core._EQ_.call(null, "squash-inwards", tok)) {
+      var a__6168 = parser.pop_BANG_.call(null, stack);
+      return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.squash_inwards(", a__6168, ",%G%)"))
     }else {
-      if(cljs.core._EQ_.call(null, "beside", tok)) {
-        var a__6156 = parser.pop_BANG_.call(null, stack);
-        var b__6157 = parser.pop_BANG_.call(null, stack);
-        return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.beside(", a__6156, ",", b__6157, ",%G%)"))
+      if(cljs.core._EQ_.call(null, "rotate90", tok)) {
+        var a__6169 = parser.pop_BANG_.call(null, stack);
+        return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.rotate90(", a__6169, ",%G%)"))
       }else {
-        if(cljs.core._EQ_.call(null, "below", tok)) {
-          var a__6158 = parser.pop_BANG_.call(null, stack);
-          var b__6159 = parser.pop_BANG_.call(null, stack);
-          return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.below(", a__6158, ",", b__6159, ",%G%)"))
+        if(cljs.core._EQ_.call(null, "flip-vert", tok)) {
+          var a__6170 = parser.pop_BANG_.call(null, stack);
+          return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.flip_vert(", a__6170, ",%G%)"))
         }else {
-          if("\ufdd0'else") {
-            return null
+          if(cljs.core._EQ_.call(null, "shrink-to-upper-right", tok)) {
+            var a__6171 = parser.pop_BANG_.call(null, stack);
+            return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.shrink_to_upper_right(", a__6171, ",%G%)"))
           }else {
-            return null
+            if(cljs.core._EQ_.call(null, "beside", tok)) {
+              var a__6172 = parser.pop_BANG_.call(null, stack);
+              var b__6173 = parser.pop_BANG_.call(null, stack);
+              return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.beside(", a__6172, ",", b__6173, ",%G%)"))
+            }else {
+              if(cljs.core._EQ_.call(null, "below", tok)) {
+                var a__6174 = parser.pop_BANG_.call(null, stack);
+                var b__6175 = parser.pop_BANG_.call(null, stack);
+                return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "picture.below(", a__6174, ",", b__6175, ",%G%)"))
+              }else {
+                if("\ufdd0'else") {
+                  return null
+                }else {
+                  return null
+                }
+              }
+            }
           }
         }
       }
@@ -21094,24 +21220,39 @@ parser.evaluateHTML = function evaluateHTML(tok, stack) {
   if(cljs.core._EQ_.call(null, "wave", tok)) {
     return parser.push_BANG_.call(null, stack, "<span id=%G%>wave</span>")
   }else {
-    if(cljs.core._EQ_.call(null, "rotate90", tok)) {
-      var a__6165 = parser.pop_BANG_.call(null, stack);
-      return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>rotate90</span> ", a__6165, "<span id=%G%>X</span>"))
+    if(cljs.core._EQ_.call(null, "squash-inwards", tok)) {
+      var a__6184 = parser.pop_BANG_.call(null, stack);
+      return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>squash-inwards</span> ", a__6184))
     }else {
-      if(cljs.core._EQ_.call(null, "beside", tok)) {
-        var a__6166 = parser.pop_BANG_.call(null, stack);
-        var b__6167 = parser.pop_BANG_.call(null, stack);
-        return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>beside</span> ", a__6166, " ", b__6167, "<span id=%G%>X</span>"))
+      if(cljs.core._EQ_.call(null, "rotate90", tok)) {
+        var a__6185 = parser.pop_BANG_.call(null, stack);
+        return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>rotate90</span> ", a__6185))
       }else {
-        if(cljs.core._EQ_.call(null, "below", tok)) {
-          var a__6168 = parser.pop_BANG_.call(null, stack);
-          var b__6169 = parser.pop_BANG_.call(null, stack);
-          return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>below</span> ", a__6168, " ", b__6169, "<span id=%G%>X</span>"))
+        if(cljs.core._EQ_.call(null, "flip-vert", tok)) {
+          var a__6186 = parser.pop_BANG_.call(null, stack);
+          return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>flip-vert</span> ", a__6186))
         }else {
-          if("\ufdd0'else") {
-            return null
+          if(cljs.core._EQ_.call(null, "shrink-to-upper-right", tok)) {
+            var a__6187 = parser.pop_BANG_.call(null, stack);
+            return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>shrink-to-upper-right</span> ", a__6187))
           }else {
-            return null
+            if(cljs.core._EQ_.call(null, "beside", tok)) {
+              var a__6188 = parser.pop_BANG_.call(null, stack);
+              var b__6189 = parser.pop_BANG_.call(null, stack);
+              return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>beside</span> ", a__6188, " ", b__6189))
+            }else {
+              if(cljs.core._EQ_.call(null, "below", tok)) {
+                var a__6190 = parser.pop_BANG_.call(null, stack);
+                var b__6191 = parser.pop_BANG_.call(null, stack);
+                return parser.push_BANG_.call(null, stack, cljs.core.list.call(null, "<span id=%G%>below</span> ", a__6190, " ", b__6191))
+              }else {
+                if("\ufdd0'else") {
+                  return null
+                }else {
+                  return null
+                }
+              }
+            }
           }
         }
       }

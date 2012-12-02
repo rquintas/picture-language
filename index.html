@@ -70,7 +70,7 @@
 	</script>
     <script>
 
-	console.log(parser.parse("(beside wave wave)"));
+	console.log(parser.parse("(beside wave wave)",parser.evaluate,'g'));
 
 	var size = 400;
 	var painter = undefined;
@@ -131,16 +131,14 @@
 		
 		var script = myCodeMirror.getValue().trim();
 		
-		console.log(parser.parse3(script));
-		
 		d3.select("svg").selectAll("line").remove();
 		d3.select("svg").selectAll("g").remove();
 				
-		painter = eval(parser.parse(script));
+		painter = eval(parser.parse(script,parser.evaluate,'g'));
 		painter(frame,lineGraph,0);
 		
-		console.log(parser.parseToHtml(script));
-		$("#code2").html(parser.parseToHtml(script));
+		console.log(parser.parse(script,parser.evaluateHTML,'c'));
+		$("#code2").html(parser.parse(script,parser.evaluateHTML,'c'));
 		
 		$.each($("#code2").find("span"),function(i,el){
 			console.log(el);
@@ -175,10 +173,10 @@
 
 	  //picture.draw_line(picture.make_vect(0,0),picture.make_vect(100,100),lineGraph);
 	
-		console.log(parser.parse("(beside wave wave)"));
+		console.log(parser.parse("(beside wave wave)",parser.evaluate,'g'));
 		
 	
-		painter = eval(parser.parse("(beside wave wave)")) //picture.segments__GT_painter(picture.wave_segments,lineGraph);
+		painter = eval(parser.parse("(beside wave wave)",parser.evaluate,'g')) //picture.segments__GT_painter(picture.wave_segments,lineGraph);
 		
 		//painter = picture.below(picture.beside(painter,painter),picture.beside(painter,painter));
 		
@@ -235,8 +233,10 @@
 	</div>
 	
 	<div class="pagewide">
-	
-		<p>Ricardo Quintas</p>
+
+		<a href="https://github.com/rquintas/picture-language"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+		
+		<a href="http://rquintas.net">Ricardo Quintas</a>
 		<p>Github</p>
 		<p>Codemirror</p>
 		<p>d3</p>

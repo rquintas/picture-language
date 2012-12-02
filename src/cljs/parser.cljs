@@ -1,7 +1,5 @@
 (ns parser
-  (:refer-clojure :exclude [replace])
-  (:require [goog.string :as gstring]
-            [goog.string.StringBuffer :as gstringbuf]))
+  (:require [clojure.string :as string]))
 
 (defn pop! [stack]
   (let [first (first @stack)]
@@ -11,78 +9,38 @@
 (defn push! [stack item]
   (swap! stack conj item))
 
-(defn replace
-"Replaces all instance of match with replacement in s.
- match/replacement can be:
-
- string / string
- pattern / (string or function of match)."
-    [s match replacement]
-    (cond (string? match)
-          (.replace s (js/RegExp. (gstring/regExpEscape match) "g") replacement)
-          (.hasOwnProperty match "source")
-          (.replace s (js/RegExp. (.-source match) "g") replacement)
-          :else (throw (str "Invalid match arg: " match))))
-
-(defn ^:export parse [n]
+(defn parse [n evalFunction groupPrefix]
     (let [stack (atom '())
-          tokens (.split (replace (replace n "(" " LPAREN ") ")" " RPAREN ") #"\s")]
+          tokens (.split (string/replace (string/replace n "(" " LPAREN ") ")" " RPAREN ") #"\s")]
         (loop [tok tokens]
             (if (empty? tok)
-                (apply str (butlast (walk (pop! stack) 0)))
+                (apply str (butlast (walk (pop! stack) 0 groupPrefix)))
                 (doseq []
-                    (evaluate (last tok) stack)
+                    (evalFunction (last tok) stack)
                     (recur (butlast tok)))))))
-
-(defn ^:export parseToHtml [n]
-    (let [stack (atom '())
-          tokens (.split (replace (replace n "(" " LPAREN ") ")" " RPAREN ") #"\s")]
-        (loop [tok tokens]
-            (if (empty? tok)
-                (apply str (butlast (walkc (pop! stack) 0)))
-                (doseq []
-                    (evaluateHTML (last tok) stack)
-                    (recur (butlast tok)))))))
-
-(defn ^:export parse2 [n]
-    (let [stack (atom '())
-          tokens (.split (replace (replace n "(" " LPAREN ") ")" " RPAREN ") #"\s")]
-        (loop [tok tokens]
-            (if (empty? tok)
-                stack
-                (doseq []
-                    (evaluate (last tok) stack)
-                    (recur (butlast tok)))))))
-
-(defn ^:export parse3 [n]
-    (let [stack (atom '())
-          tokens (.split (replace (replace n "(" " LPAREN ") ")" " RPAREN ") #"\s")]
-        tokens))
   
-(defn walk [l v]
+(defn walk [l v prefix]
   (if (and (list? l) (not (empty? l)))
-    (let [a (walk (first l) v)
+    (let [a (walk (first l) v prefix)
           v2 (last a)
-          b (walk (rest l) v2)]
+          b (walk (rest l) v2 prefix)]
 		(concat (butlast a) b))
     (if (empty? l)
-      (list "" (inc v))
-      (list (replace (str l) "%G%" (str "'g" v "'")) (inc v)))))
-
-(defn walkc [l v]
-  (if (and (list? l) (not (empty? l)))
-    (let [a (walkc (first l) v)
-          v2 (last a)
-          b (walkc (rest l) v2)]
-		(concat (butlast a) b))
-    (if (empty? l)
-      (list "" (inc v))
-      (list (replace (str l) "%G%" (str "'c" v "'")) (inc v)))))
-                
+      (list "" v)
+      (if (> (.indexOf (str l) "%G%") -1)
+          (list (string/replace (str l) "%G%" (str "'" prefix v "'")) (inc v))
+          (list (str l) v)))))
+                             
 (defn evaluate [tok stack]
     (cond (= "wave" tok) (push! stack "picture.segments__GT_painter(picture.wave_segments,%G%)")
+          (= "squash-inwards" tok) (let [a (pop! stack)]
+                              (push! stack (list "picture.squash_inwards(" a ",%G%)")))
           (= "rotate90" tok) (let [a (pop! stack)]
                               (push! stack (list "picture.rotate90(" a ",%G%)")))
+          (= "flip-vert" tok) (let [a (pop! stack)]
+                              (push! stack (list "picture.flip_vert(" a ",%G%)")))
+          (= "shrink-to-upper-right" tok) (let [a (pop! stack)]
+                              (push! stack (list "picture.shrink_to_upper_right(" a ",%G%)")))
           (= "beside" tok) (let [a (pop! stack)
                                  b (pop! stack)]
                             (push! stack (list "picture.beside(" a "," b ",%G%)")))
@@ -90,15 +48,21 @@
                                 b (pop! stack)]
                             (push! stack (list "picture.below(" a "," b ",%G%)")))        
            :else nil))
-           
+
 (defn evaluateHTML [tok stack]
     (cond (= "wave" tok) (push! stack "<span id=%G%>wave</span>")
+          (= "squash-inwards" tok) (let [a (pop! stack)]
+                              (push! stack (list "<span id=%G%>squash-inwards</span> " a)))
           (= "rotate90" tok) (let [a (pop! stack)]
-                              (push! stack (list "<span id=%G%>rotate90</span> " a "<span id=%G%>X</span>")))
+                              (push! stack (list "<span id=%G%>rotate90</span> " a)))
+          (= "flip-vert" tok) (let [a (pop! stack)]
+                              (push! stack (list "<span id=%G%>flip-vert</span> " a)))
+          (= "shrink-to-upper-right" tok) (let [a (pop! stack)]
+                              (push! stack (list "<span id=%G%>shrink-to-upper-right</span> " a)))
           (= "beside" tok) (let [a (pop! stack)
                                  b (pop! stack)]
-                            (push! stack (list "<span id=%G%>beside</span> " a " " b "<span id=%G%>X</span>")))
+                            (push! stack (list "<span id=%G%>beside</span> " a " " b)))
           (= "below" tok) (let [a (pop! stack)
                                 b (pop! stack)]
-                            (push! stack (list "<span id=%G%>below</span> " a " " b "<span id=%G%>X</span>")))        
+                            (push! stack (list "<span id=%G%>below</span> " a " " b)))        
            :else nil))

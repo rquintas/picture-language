@@ -1,9 +1,6 @@
 (ns picture)
 
-(defn ^:export greet [n]
-  (str "Cenas " n))
-
-(defn ^:export make-vect [x y]
+(defn make-vect [x y]
     (list x y))
 
 (defn xcor-vect [v]
