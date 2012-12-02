@@ -20851,8 +20851,8 @@ picture.end_segment = function end_segment(segment) {
   return cljs.core.last.call(null, segment)
 };
 picture.draw_line = function draw_line(v1, v2, graphics) {
-  var line__6201 = graphics.append("svg:line");
-  return line__6201.attr("x1", picture.xcor_vect.call(null, v1)).attr("y1", picture.ycor_vect.call(null, v1)).attr("x2", picture.xcor_vect.call(null, v2)).attr("y2", picture.ycor_vect.call(null, v2)).style("stroke", "rgb(6,120,155)")
+  var line__6108 = graphics.append("svg:line");
+  return line__6108.attr("x1", picture.xcor_vect.call(null, v1)).attr("y1", picture.ycor_vect.call(null, v1)).attr("x2", picture.xcor_vect.call(null, v2)).attr("y2", picture.ycor_vect.call(null, v2)).style("stroke", "rgb(6,120,155)")
 };
 goog.exportSymbol("picture.draw_line", picture.draw_line);
 picture.draw_image = function draw_image(frame, image, graphics) {
@@ -20863,15 +20863,15 @@ picture.draw_as_group = function draw_as_group(graphics, id) {
 };
 picture.segments__GT_painter = function segments__GT_painter(id, segment_list) {
   return function(frame, g) {
-    var graphics__6204 = picture.draw_as_group.call(null, g, id);
-    var segments__6205 = segment_list;
+    var graphics__6111 = picture.draw_as_group.call(null, g, id);
+    var segments__6112 = segment_list;
     while(true) {
-      if(cljs.core.empty_QMARK_.call(null, segments__6205)) {
+      if(cljs.core.empty_QMARK_.call(null, segments__6112)) {
         return segment_list
       }else {
-        picture.draw_line.call(null, picture.frame_coord_map.call(null, frame).call(null, picture.start_segment.call(null, cljs.core.first.call(null, segments__6205))), picture.frame_coord_map.call(null, frame).call(null, picture.end_segment.call(null, cljs.core.first.call(null, segments__6205))), graphics__6204);
-        var G__6206 = cljs.core.rest.call(null, segments__6205);
-        segments__6205 = G__6206;
+        picture.draw_line.call(null, picture.frame_coord_map.call(null, frame).call(null, picture.start_segment.call(null, cljs.core.first.call(null, segments__6112))), picture.frame_coord_map.call(null, frame).call(null, picture.end_segment.call(null, cljs.core.first.call(null, segments__6112))), graphics__6111);
+        var G__6113 = cljs.core.rest.call(null, segments__6112);
+        segments__6112 = G__6113;
         continue
       }
       break
@@ -20884,14 +20884,14 @@ picture.image__GT_painter = function image__GT_painter(image) {
   }
 };
 picture.outline_painter = function outline_painter() {
-  var segment_list__6208 = cljs.core.list.call(null, picture.make_segment.call(null, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 0, 1)), picture.make_segment.call(null, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 1, 0)), picture.make_segment.call(null, picture.make_vect.call(null, 1, 1), picture.make_vect.call(null, 0, 1)), picture.make_segment.call(null, picture.make_vect.call(null, 1, 0), picture.make_vect.call(null, 1, 1)));
-  return picture.segments__GT_painter.call(null, segment_list__6208)
+  var segment_list__6115 = cljs.core.list.call(null, picture.make_segment.call(null, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 0, 1)), picture.make_segment.call(null, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 1, 0)), picture.make_segment.call(null, picture.make_vect.call(null, 1, 1), picture.make_vect.call(null, 0, 1)), picture.make_segment.call(null, picture.make_vect.call(null, 1, 0), picture.make_vect.call(null, 1, 1)));
+  return picture.segments__GT_painter.call(null, segment_list__6115)
 };
 picture.transform_painter = function transform_painter(painter, origin, corner1, corner2, id) {
   return function(frame, graphics) {
-    var m__6211 = picture.frame_coord_map.call(null, frame);
-    var new_origin__6212 = m__6211.call(null, origin);
-    return painter.call(null, picture.make_frame.call(null, new_origin__6212, picture.sub_vect.call(null, m__6211.call(null, corner1), new_origin__6212), picture.sub_vect.call(null, m__6211.call(null, corner2), new_origin__6212)), picture.draw_as_group.call(null, graphics, id))
+    var m__6118 = picture.frame_coord_map.call(null, frame);
+    var new_origin__6119 = m__6118.call(null, origin);
+    return painter.call(null, picture.make_frame.call(null, new_origin__6119, picture.sub_vect.call(null, m__6118.call(null, corner1), new_origin__6119), picture.sub_vect.call(null, m__6118.call(null, corner2), new_origin__6119)), picture.draw_as_group.call(null, graphics, id))
   }
 };
 picture.flip_vert = function flip_vert(id, painter) {
@@ -20907,23 +20907,23 @@ picture.squash_inwards = function squash_inwards(id, painter) {
   return picture.transform_painter.call(null, painter, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 0.65, 0.35), picture.make_vect.call(null, 0.35, 0.65), id)
 };
 picture.beside = function beside(id, painter1, painter2) {
-  var split_point__6217 = picture.make_vect.call(null, 0.5, 0);
-  var paint_left__6218 = picture.transform_painter.call(null, painter1, picture.make_vect.call(null, 0, 0), split_point__6217, picture.make_vect.call(null, 0, 1), id);
-  var paint_right__6219 = picture.transform_painter.call(null, painter2, split_point__6217, picture.make_vect.call(null, 1, 0), picture.make_vect.call(null, 0.5, 1), id);
+  var split_point__6124 = picture.make_vect.call(null, 0.5, 0);
+  var paint_left__6125 = picture.transform_painter.call(null, painter1, picture.make_vect.call(null, 0, 0), split_point__6124, picture.make_vect.call(null, 0, 1), id);
+  var paint_right__6126 = picture.transform_painter.call(null, painter2, split_point__6124, picture.make_vect.call(null, 1, 0), picture.make_vect.call(null, 0.5, 1), id);
   return function(frame, graphics) {
-    var group__6220 = picture.draw_as_group.call(null, graphics, id);
-    paint_left__6218.call(null, frame, group__6220);
-    return paint_right__6219.call(null, frame, group__6220)
+    var group__6127 = picture.draw_as_group.call(null, graphics, id);
+    paint_left__6125.call(null, frame, group__6127);
+    return paint_right__6126.call(null, frame, group__6127)
   }
 };
 picture.below = function below(id, painter1, painter2) {
-  var split_point__6225 = picture.make_vect.call(null, 0, 0.5);
-  var paint_up__6226 = picture.transform_painter.call(null, painter1, split_point__6225, picture.make_vect.call(null, 1, 0.5), picture.make_vect.call(null, 0, 1), id);
-  var paint_down__6227 = picture.transform_painter.call(null, painter2, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 1, 0), split_point__6225, id);
+  var split_point__6132 = picture.make_vect.call(null, 0, 0.5);
+  var paint_up__6133 = picture.transform_painter.call(null, painter1, split_point__6132, picture.make_vect.call(null, 1, 0.5), picture.make_vect.call(null, 0, 1), id);
+  var paint_down__6134 = picture.transform_painter.call(null, painter2, picture.make_vect.call(null, 0, 0), picture.make_vect.call(null, 1, 0), split_point__6132, id);
   return function(frame, graphics) {
-    var group__6228 = picture.draw_as_group.call(null, graphics, id);
-    paint_up__6226.call(null, frame, group__6228);
-    return paint_down__6227.call(null, frame, group__6228)
+    var group__6135 = picture.draw_as_group.call(null, graphics, id);
+    paint_up__6133.call(null, frame, group__6135);
+    return paint_down__6134.call(null, frame, group__6135)
   }
 };
 picture.wave_segments = cljs.core.list.call(null, picture.make_segment.call(null, picture.make_vect.call(null, 0.0060, 0.84), picture.make_vect.call(null, 0.155, 0.591)), picture.make_segment.call(null, picture.make_vect.call(null, 0.0060, 0.635), picture.make_vect.call(null, 0.155, 0.392)), picture.make_segment.call(null, picture.make_vect.call(null, 0.304, 0.646), picture.make_vect.call(null, 0.155, 0.591)), picture.make_segment.call(null, picture.make_vect.call(null, 0.298, 0.591), picture.make_vect.call(null, 

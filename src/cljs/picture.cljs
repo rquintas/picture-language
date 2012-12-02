@@ -158,6 +158,7 @@
                 (paint-up frame group)
                 (paint-down frame group)))))
 
+;;Wave segments from http://www.billthelizard.com/2012/02/sicp-252-levels-of-language-for-robust.html
 (def wave-segments
      (list
       (make-segment
